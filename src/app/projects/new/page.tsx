@@ -57,7 +57,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogC
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
-const upcomingProjects = [
+export const upcomingProjects = [
   {
     id: 'proj-001',
     name: 'National Digital Health Mission',
@@ -150,10 +150,12 @@ function AppSidebar() {
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <SidebarMenuSubButton>
-                    <Lightbulb className="mr-2" />
-                    New Schemes
-                  </SidebarMenuSubButton>
+                  <Link href="/projects/schemes">
+                    <SidebarMenuSubButton>
+                      <Lightbulb className="mr-2" />
+                      New Schemes
+                    </SidebarMenuSubButton>
+                  </Link>
                 </SidebarMenuSubItem>
               </SidebarMenuSub>
             </CollapsibleContent>

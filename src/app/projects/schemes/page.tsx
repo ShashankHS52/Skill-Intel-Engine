@@ -14,13 +14,14 @@ import {
   Settings,
   BookCheck,
   Loader2,
+  Sparkles,
+  Target,
   Users,
-  Building,
-  ClipboardList,
+  ClipboardCheck,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
@@ -51,42 +52,21 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { analyzeTender } from '@/app/actions/tender-analyzer';
-import { TenderAnalyzerOutput } from '@/ai/flows/tender-analyzer';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Textarea } from '@/components/ui/textarea';
+import { generateScheme } from '@/app/actions/scheme-generator';
+import { SchemeGeneratorOutput } from '@/ai/flows/scheme-generator';
+import { upcomingProjects } from '../new/page';
+import { upcomingTenders } from '../tender/page';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
-export const upcomingTenders = [
-  {
-    id: 'ten-001',
-    name: 'Construction of Rural Roads under PMGSY',
-    description: 'Tender for the construction and maintenance of all-weather rural roads in the state of Uttar Pradesh.',
-    field: 'Construction',
-    location: 'Uttar Pradesh',
-  },
-  {
-    id: 'ten-002',
-    name: 'IT Infrastructure Upgrade for Municipal Corporations',
-    description: 'Supply, installation, and maintenance of IT hardware and networking solutions for municipal offices in Maharashtra.',
-    field: 'IT & Networking',
-    location: 'Maharashtra',
-  },
-  {
-    id: 'ten-003',
-    name: 'Healthcare Waste Management Services',
-    description: 'A tender for the collection, transportation, treatment, and disposal of biomedical waste from government hospitals in Kerala.',
-    field: 'Healthcare & Waste Management',
-    location: 'Kerala',
-  },
-  {
-    id: 'ten-004',
-    name: 'Solar Power Plant Installation in Rajasthan',
-    description: 'Tender for the setup of a 50 MW solar power plant, including land acquisition, installation, and commissioning.',
-    field: 'Renewable Energy',
-    location: 'Rajasthan',
-  },
-];
+const formSchema = z.object({
+  field: z.string().min(3, { message: 'Field is required.' }),
+});
 
 function AppSidebar() {
   return (
@@ -147,7 +127,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/tender">
-                    <SidebarMenuSubButton isActive>
+                    <SidebarMenuSubButton>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
@@ -155,7 +135,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/schemes">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive>
                       <Lightbulb className="mr-2" />
                       New Schemes
                     </SidebarMenuSubButton>
@@ -222,27 +202,34 @@ function AppHeader() {
   );
 }
 
-export default function TenderPage() {
-  const [analysisResult, setAnalysisResult] = useState<TenderAnalyzerOutput | null>(null);
-  const [loadingTenderId, setLoadingTenderId] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+export default function NewSchemesPage() {
+  const [analysisResult, setAnalysisResult] = useState<SchemeGeneratorOutput | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleAnalyzeClick = async (tender: { id: string; field: string; location: string }) => {
-    setLoadingTenderId(tender.id);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      field: 'Rural Skill Development',
+    },
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    setLoading(true);
     setAnalysisResult(null);
     try {
-      const result = await analyzeTender({
-        tenderField: tender.field,
-        location: tender.location,
+      const result = await generateScheme({
+        field: values.field,
+        projects: upcomingProjects.map(p => ({ name: p.name, description: p.description })),
+        tenders: upcomingTenders.map(t => ({ name: t.name, description: t.description })),
       });
       setAnalysisResult(result);
-      setIsDialogOpen(true);
     } catch (error) {
-      console.error("Error analyzing tender:", error);
+      console.error("Error generating scheme:", error);
     } finally {
-      setLoadingTenderId(null);
+      setLoading(false);
     }
   };
+
 
   return (
     <SidebarProvider>
@@ -258,75 +245,98 @@ export default function TenderPage() {
                   <span className="sr-only">Back</span>
                 </Button>
               </Link>
-              <h1 className="font-semibold text-xl md:text-2xl">Government Tenders</h1>
+              <h1 className="font-semibold text-xl md:text-2xl">AI-Powered Scheme Generator</h1>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {upcomingTenders.map(tender => (
-                <Card key={tender.id}>
+            
+            <div className="grid gap-8 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Generate a New Scheme</CardTitle>
+                  <CardDescription>Use AI to brainstorm a new government scheme based on existing projects and tenders.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="field"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Scheme Field / Sector</FormLabel>
+                            <FormControl>
+                              <Input placeholder="e.g., Renewable Energy, Women's Safety" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <p className="text-xs text-muted-foreground">The AI will use the full list of projects and tenders as context.</p>
+                      <Button type="submit" disabled={loading} className="w-full">
+                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        {loading ? 'Generating...' : 'Generate with AI'}
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+
+              {loading && (
+                <Card>
                   <CardHeader>
-                    <CardTitle>{tender.name}</CardTitle>
-                    <CardDescription>{tender.location}</CardDescription>
+                    <Skeleton className="h-7 w-2/3" />
+                    <Skeleton className="h-4 w-full mt-2" />
                   </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-3">{tender.description}</p>
+                  <CardContent className="space-y-6">
+                     <div>
+                        <Skeleton className="h-6 w-1/3 mb-2" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-5/6 mt-1" />
+                     </div>
+                      <div>
+                        <Skeleton className="h-6 w-1/3 mb-2" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-4/6 mt-1" />
+                     </div>
+                      <div>
+                        <Skeleton className="h-6 w-1/3 mb-2" />
+                         <Skeleton className="h-4 w-5/6" />
+                     </div>
                   </CardContent>
-                  <CardFooter>
-                    <Button
-                      className="w-full"
-                      onClick={() => handleAnalyzeClick(tender)}
-                      disabled={loadingTenderId === tender.id}
-                    >
-                      {loadingTenderId === tender.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {loadingTenderId === tender.id ? 'Analyzing...' : 'Use AI to Analyze'}
-                    </Button>
-                  </CardFooter>
                 </Card>
-              ))}
+              )}
+
+              {analysisResult && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <Sparkles className="h-6 w-6 text-primary" />
+                        {analysisResult.schemeName}
+                    </CardTitle>
+                    <CardDescription>{analysisResult.schemeDescription}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div>
+                      <h3 className="font-semibold flex items-center gap-2 mb-2">
+                        <Target className="h-5 w-5 text-primary" /> Objectives
+                      </h3>
+                      <ul className="list-disc pl-5 space-y-1 text-sm text-foreground">
+                        {analysisResult.objectives.map((obj, index) => (
+                          <li key={index}>{obj}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold flex items-center gap-2 mb-2">
+                        <Users className="h-5 w-5 text-primary" /> Target Beneficiaries
+                      </h3>
+                      <p className="text-sm text-foreground">{analysisResult.targetBeneficiaries}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </div>
           </main>
         </SidebarInset>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Tender Analysis for Local Employment</DialogTitle>
-            </DialogHeader>
-            {analysisResult && (
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Building className="h-5 w-5 text-primary" /> Target Industries & Roles
-                  </h3>
-                  <ul className="list-disc pl-12 mt-2 space-y-1 text-sm text-foreground">
-                    {analysisResult.targetIndustriesAndRoles.map((role, index) => (
-                      <li key={index}>{role}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" /> Potential Local Workforce
-                  </h3>
-                  <ul className="list-disc pl-12 mt-2 space-y-1 text-sm text-foreground">
-                    {analysisResult.potentialLocalWorkforce.map((workforce, index) => (
-                      <li key={index}>{workforce}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <ClipboardList className="h-5 w-5 text-primary" /> Job Matching Strategy
-                  </h3>
-                  <p className="text-sm text-foreground mt-2 pl-7">{analysisResult.jobMatchingStrategy}</p>
-                </div>
-              </div>
-            )}
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button>Close</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </SidebarProvider>
   );
