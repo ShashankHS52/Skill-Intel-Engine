@@ -2,18 +2,20 @@
 import {
   BookCheck,
   LayoutDashboard,
-  LineChart,
+  ChevronDown,
+  Briefcase,
+  FileText,
+  Lightbulb,
   Search,
   Settings,
   Target,
   Users,
-  Briefcase,
   PieChart,
   User,
+  FolderKanban,
 } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,7 +36,15 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import KpiCard from '@/components/dashboard/kpi-card';
 import GeographicalHeatmap from '@/components/dashboard/geographical-heatmap';
 import TrainingProgramManagement from '@/components/dashboard/training-program-management';
@@ -77,12 +87,41 @@ function AppSidebar() {
               Dashboard
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Analytics">
-              <LineChart />
-              Analytics
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <Collapsible>
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton tooltip="Projects" className="justify-between">
+                  <div className="flex items-center gap-2">
+                    <FolderKanban />
+                    Projects
+                  </div>
+                  <ChevronDown className="h-4 w-4" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+            </SidebarMenuItem>
+            <CollapsibleContent asChild>
+              <SidebarMenuSub>
+                <SidebarMenuSubItem>
+                  <SidebarMenuSubButton>
+                    <Briefcase className="mr-2" />
+                    New Projects
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+                <SidebarMenuSubItem>
+                  <SidebarMenuSubButton>
+                    <FileText className="mr-2" />
+                    Tender
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+                <SidebarMenuSubItem>
+                  <SidebarMenuSubButton>
+                    <Lightbulb className="mr-2" />
+                    New Schemes
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </Collapsible>
           <SidebarMenuItem>
             <SidebarMenuButton tooltip="Programs">
               <BookCheck />
