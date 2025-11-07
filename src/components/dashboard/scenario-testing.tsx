@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2, Download } from 'lucide-react';
+import { Loader2, Download, TrendingUp, ShieldCheck } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -145,12 +145,12 @@ export default function ScenarioTesting() {
           {result && (
              <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
               <div>
-                <h3 className="font-semibold">Projected Skill Demand Changes</h3>
-                <p className="text-sm text-muted-foreground">{result.projectedSkillDemandChanges}</p>
+                <h3 className="font-semibold flex items-center gap-2"><TrendingUp className="h-5 w-5 text-primary" /> Projected Skill Demand Changes</h3>
+                <p className="text-sm text-muted-foreground mt-2 pl-7">{result.projectedSkillDemandChanges}</p>
               </div>
               <div>
-                <h3 className="font-semibold">Policy Recommendations</h3>
-                <p className="text-sm text-muted-foreground">{result.policyRecommendations}</p>
+                <h3 className="font-semibold flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" /> Policy Recommendations</h3>
+                <p className="text-sm text-muted-foreground mt-2 pl-7">{result.policyRecommendations}</p>
               </div>
             </div>
           )}
