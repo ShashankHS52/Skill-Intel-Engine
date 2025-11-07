@@ -47,21 +47,30 @@ export default function GeographicalHeatmap() {
                 alt="Geographical Heatmap of India"
                 fill
                 style={{ objectFit: 'contain' }}
-                className="opacity-50"
                 data-ai-hint={mapImage.imageHint}
             />
           )}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <p className="text-muted-foreground font-semibold bg-background/80 px-4 py-2 rounded-lg">
+            <p className="text-muted-foreground font-semibold bg-background/80 px-4 py-2 rounded-lg opacity-0">
               Skill Gap Heatmap
             </p>
           </div>
           {/* Mock heatmap points for skill gaps in India */}
-          <div className="absolute top-[25%] left-[40%] w-8 h-8 bg-red-500/50 rounded-full animate-pulse" title="Delhi: High demand for AI/ML skills"></div>
-          <div className="absolute top-[70%] left-[55%] w-12 h-12 bg-red-600/60 rounded-full animate-pulse delay-200" title="Bangalore: Critical shortage of Data Scientists"></div>
-          <div className="absolute top-[50%] left-[20%] w-10 h-10 bg-orange-600/60 rounded-full animate-pulse delay-400" title="Mumbai: Need for financial analysts"></div>
-          <div className="absolute top-[30%] left-[80%] w-6 h-6 bg-yellow-500/50 rounded-full animate-pulse delay-100" title="Kolkata: Growing need for digital marketing skills"></div>
-          <div className="absolute top-[85%] left-[65%] w-7 h-7 bg-green-500/50 rounded-full animate-pulse delay-300" title="Chennai: Surplus of IT support staff"></div>
+          <div className="absolute top-[28%] left-[43%]" title="Delhi: High demand for AI/ML skills">
+            <div className="w-5 h-5 bg-red-500/50 rounded-full animate-pulse"></div>
+          </div>
+          <div className="absolute top-[75%] left-[45%]" title="Bangalore: Critical shortage of Data Scientists">
+            <div className="w-8 h-8 bg-red-600/60 rounded-full animate-pulse delay-200"></div>
+          </div>
+          <div className="absolute top-[55%] left-[30%]" title="Mumbai: Need for financial analysts">
+            <div className="w-7 h-7 bg-orange-600/60 rounded-full animate-pulse delay-400"></div>
+          </div>
+          <div className="absolute top-[48%] left-[68%]" title="Kolkata: Growing need for digital marketing skills">
+            <div className="w-4 h-4 bg-yellow-500/50 rounded-full animate-pulse delay-100"></div>
+          </div>
+          <div className="absolute top-[85%] left-[48%]" title="Chennai: Surplus of IT support staff">
+            <div className="w-5 h-5 bg-green-500/50 rounded-full animate-pulse delay-300"></div>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -47,7 +47,6 @@ export default function GeographicalHeatmap() {
                 alt="Geographical Heatmap of India"
                 fill
                 style={{ objectFit: 'contain' }}
-                className="opacity-70"
                 data-ai-hint={mapImage.imageHint}
             />
           )}
