@@ -13,6 +13,8 @@ import {
   PieChart,
   User,
   FolderKanban,
+  TrendingUp,
+  AlertTriangle,
 } from 'lucide-react';
 
 import Link from 'next/link';
@@ -129,12 +131,35 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Programs">
-              <BookCheck />
-              Programs
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          <Collapsible>
+            <SidebarMenuItem>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuButton tooltip="Awareness" className="justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp />
+                    Awareness
+                  </div>
+                  <ChevronDown className="h-4 w-4" />
+                </SidebarMenuButton>
+              </CollapsibleTrigger>
+            </SidebarMenuItem>
+            <CollapsibleContent asChild>
+              <SidebarMenuSub>
+                <SidebarMenuSubItem>
+                  <SidebarMenuSubButton>
+                    <TrendingUp className="mr-2" />
+                    Job Sector Prediction
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+                <SidebarMenuSubItem>
+                  <SidebarMenuSubButton>
+                    <AlertTriangle className="mr-2" />
+                    Job Risk Awareness
+                  </SidebarMenuSubButton>
+                </SidebarMenuSubItem>
+              </SidebarMenuSub>
+            </CollapsibleContent>
+          </Collapsible>
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
