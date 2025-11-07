@@ -46,15 +46,10 @@ export default function GeographicalHeatmap() {
                 src={mapImage.imageUrl}
                 alt="Geographical Heatmap of India"
                 fill
-                style={{ objectFit: 'contain' }}
+                className="object-contain"
                 data-ai-hint={mapImage.imageHint}
             />
           )}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <p className="text-muted-foreground font-semibold bg-background/80 px-4 py-2 rounded-lg opacity-0">
-              Skill Gap Heatmap
-            </p>
-          </div>
           {/* Mock heatmap points for skill gaps in India */}
           <div className="absolute top-[28%] left-[43%]" title="Delhi: High demand for AI/ML skills">
             <div className="w-5 h-5 bg-red-500/50 rounded-full animate-pulse"></div>
