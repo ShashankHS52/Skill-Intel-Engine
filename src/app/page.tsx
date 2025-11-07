@@ -6,6 +6,9 @@ import {
   Settings,
   Target,
   Users,
+  Briefcase,
+  PieChart,
+  User,
 } from 'lucide-react';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -145,6 +148,37 @@ export default function Dashboard() {
         <SidebarInset>
           <AppHeader />
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
+            <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+              <KpiCard
+                title="Male Count"
+                value="7.2M"
+                change="+5.5%"
+                icon={<User className="h-5 w-5 text-muted-foreground" />}
+                description="from last month"
+              />
+              <KpiCard
+                title="Female Count"
+                value="6.1M"
+                change="+15.2%"
+                icon={<User className="h-5 w-5 text-muted-foreground" />}
+                description="from last month"
+              />
+              <KpiCard
+                title="Total Employment"
+                value="85%"
+                change="+2.8%"
+                icon={<Briefcase className="h-5 w-5 text-muted-foreground" />}
+                description="from last month"
+              />
+              <KpiCard
+                title="Unemployment Ratio"
+                value="7.6%"
+                change="-0.5%"
+                icon={<PieChart className="h-5 w-5 text-muted-foreground" />}
+                description="from last month"
+                changeType="negative"
+              />
+            </div>
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
               <KpiCard
                 title="Total Registered Users"
