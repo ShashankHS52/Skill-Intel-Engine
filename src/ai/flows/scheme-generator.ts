@@ -42,11 +42,11 @@ Existing Tenders:
 Based on your analysis of these projects and tenders, perform the following steps:
 1.  **Predict Future Skills**: Identify a list of new or emerging skills that will be in high demand to support these initiatives.
 2.  **Identify Gaps**: Determine the gap between the current workforce's skills and the predicted future needs.
-3.  **Generate Schemes**: Propose a list of 2-3 distinct upskilling schemes to address these gaps.
+3.  **Generate Schemes**: Propose a list of 1 to 5 distinct upskilling schemes to address these gaps.
 
 For each suggested scheme, provide the following details:
-- **Scheme Name**: A creative and fitting name for the scheme.
-- **Scheme Description**: A detailed description of the scheme, its purpose, and how it will work.
+- **Scheme Name**: A creative, sweet, and short name for the scheme.
+- **Scheme Description**: A sweet and short description of the scheme, its purpose, and how it will work.
 - **Objectives**: A list of key objectives for the new scheme.
 - **Predicted Skill Gaps**: The specific future skills this scheme will address.
 - **Upskilling Strategy**: A concise strategy for how the scheme will train and upskill the workforce.
