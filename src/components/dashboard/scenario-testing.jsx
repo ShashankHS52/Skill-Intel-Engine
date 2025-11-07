@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Download } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -18,7 +18,14 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogClose,
+} from '@/components/ui/dialog';
 import { simulateEconomicImpact } from '@/app/actions/scenario-testing';
 import { Skeleton } from '../ui/skeleton';
 
@@ -31,13 +38,14 @@ const formSchema = z.object({
 export default function ScenarioTesting() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       factoryLocation: 'Pune, Maharashtra',
-      laborTypesRequired: 'Automobile engineers, supply chain specialists',
-      additionalContext: 'New EV manufacturing plant being set up.',
+      laborTypesRequired: 'Automobile engineers, supply chain specialists, robotics technicians',
+      additionalContext: 'A new electric vehicle (EV) manufacturing plant is being set up as part of the Make in India initiative.',
     },
   });
 
@@ -47,12 +55,27 @@ export default function ScenarioTesting() {
     try {
       const response = await simulateEconomicImpact(values);
       setResult(response);
+      setIsDialogOpen(true);
     } catch (error) {
       console.error('Error simulating economic impact:', error);
     } finally {
       setLoading(false);
     }
   }
+
+  const handleDownload = () => {
+    if (result) {
+      const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'scenario-testing-analysis.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
 
   return (
     <div className="space-y-4 pt-4">
@@ -105,35 +128,42 @@ export default function ScenarioTesting() {
       </Form>
 
       {loading && (
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-1/2" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-10 w-full mt-4" />
-          </CardContent>
-        </Card>
+        <div className="space-y-4 mt-4">
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-10 w-full mt-4" />
+        </div>
       )}
       
-      {result && (
-        <Card className="bg-secondary/50">
-          <CardHeader>
-            <CardTitle>Scenario Simulation Result</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-semibold">Projected Skill Demand Changes</h3>
-              <p className="text-sm text-muted-foreground">{result.projectedSkillDemandChanges}</p>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Scenario Simulation Result</DialogTitle>
+          </DialogHeader>
+          {result && (
+             <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
+              <div>
+                <h3 className="font-semibold">Projected Skill Demand Changes</h3>
+                <p className="text-sm text-muted-foreground">{result.projectedSkillDemandChanges}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Policy Recommendations</h3>
+                <p className="text-sm text-muted-foreground">{result.policyRecommendations}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">Policy Recommendations</h3>
-              <p className="text-sm text-muted-foreground">{result.policyRecommendations}</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+          )}
+          <DialogFooter>
+             <Button variant="outline" onClick={handleDownload}>
+              <Download className="mr-2 h-4 w-4" />
+              Download
+            </Button>
+            <DialogClose asChild>
+              <Button>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

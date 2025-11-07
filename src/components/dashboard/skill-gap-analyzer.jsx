@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Download } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,7 +24,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
 import { analyzeSkillGaps } from '@/app/actions/analyze-skill-gaps';
 import { Skeleton } from '../ui/skeleton';
 
@@ -38,6 +45,7 @@ const formSchema = z.object({
 export default function SkillGapAnalyzer() {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -45,7 +53,7 @@ export default function SkillGapAnalyzer() {
       sector: 'Technology',
       region: 'Maharashtra',
       proficiencyLevel: 'Mid-level',
-      specificConsiderations: '',
+      specificConsiderations: 'Focus on AI and ML skills shortage in the fintech sub-sector.',
     },
   });
 
@@ -55,12 +63,27 @@ export default function SkillGapAnalyzer() {
     try {
       const response = await analyzeSkillGaps(values);
       setResult(response);
+      setIsDialogOpen(true);
     } catch (error) {
       console.error('Error analyzing skill gaps:', error);
     } finally {
       setLoading(false);
     }
   }
+  
+  const handleDownload = () => {
+    if (result) {
+      const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'skill-gap-analysis.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
 
   return (
     <div className="space-y-4 pt-4">
@@ -138,39 +161,46 @@ export default function SkillGapAnalyzer() {
       </Form>
 
       {loading && (
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-1/2" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-10 w-full mt-4" />
-          </CardContent>
-        </Card>
+        <div className="space-y-4 mt-4">
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-10 w-full mt-4" />
+        </div>
       )}
 
-      {result && (
-        <Card className="bg-secondary/50">
-          <CardHeader>
-            <CardTitle>Analysis Result</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h3 className="font-semibold">Summary</h3>
-              <p className="text-sm text-muted-foreground">{result.analysisSummary}</p>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Skill Gap Analysis Result</DialogTitle>
+          </DialogHeader>
+          {result && (
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
+              <div>
+                <h3 className="font-semibold">Summary</h3>
+                <p className="text-sm text-muted-foreground">{result.analysisSummary}</p>
+              </div>
+              <div>
+                <h3 className="font-semibold">Policy Recommendations</h3>
+                <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-muted-foreground">
+                  {result.policyRecommendations.map((rec, index) => (
+                    <li key={index}>{rec}</li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold">Policy Recommendations</h3>
-              <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-muted-foreground">
-                {result.policyRecommendations.map((rec, index) => (
-                  <li key={index}>{rec}</li>
-                ))}
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={handleDownload}>
+              <Download className="mr-2 h-4 w-4" />
+              Download
+            </Button>
+            <DialogClose asChild>
+              <Button>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

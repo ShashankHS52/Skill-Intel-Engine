@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Download } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -24,8 +24,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+    DialogClose,
+} from '@/components/ui/dialog';
 import { automationRiskAlert } from '@/app/actions/automation-risk-alert';
 import type { AutomationRiskAlertOutput } from '@/ai/flows/automation-risk-alert';
 import { Skeleton } from '../ui/skeleton';
@@ -39,6 +46,7 @@ const formSchema = z.object({
 export default function AutomationRiskAlert() {
   const [result, setResult] = useState<AutomationRiskAlertOutput | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,12 +63,28 @@ export default function AutomationRiskAlert() {
     try {
       const response = await automationRiskAlert(values);
       setResult(response);
+      setIsDialogOpen(true);
     } catch (error) {
       console.error('Error analyzing automation risk:', error);
     } finally {
       setLoading(false);
     }
   }
+
+  const handleDownload = () => {
+    if (result) {
+      const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'automation-risk-analysis.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
+
 
   return (
     <div className="space-y-4 pt-4">
@@ -125,58 +149,65 @@ export default function AutomationRiskAlert() {
       </Form>
 
       {loading && (
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-6 w-1/2" />
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-10 w-full mt-4" />
-          </CardContent>
-        </Card>
+        <div className="space-y-4 mt-4">
+          <Skeleton className="h-6 w-1/2" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-10 w-full mt-4" />
+        </div>
       )}
 
-      {result && (
-        <Card className="bg-secondary/50">
-          <CardHeader>
-            <CardTitle>Risk Analysis Result</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-                <h3 className="font-semibold text-sm">Affected Population</h3>
-                <div className="flex items-center gap-2 mt-1">
-                    <Progress value={result.affectedPopulationPercentage} className="w-full h-2 bg-accent" />
-                    <span className="font-bold text-sm text-accent-foreground/80">{result.affectedPopulationPercentage}%</span>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>Automation Risk Analysis Result</DialogTitle>
+          </DialogHeader>
+          {result && (
+             <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
+                <div>
+                    <h3 className="font-semibold text-sm">Affected Population</h3>
+                    <div className="flex items-center gap-2 mt-1">
+                        <Progress value={result.affectedPopulationPercentage} className="w-full h-2" />
+                        <span className="font-bold text-sm">{result.affectedPopulationPercentage}%</span>
+                    </div>
                 </div>
-            </div>
-            <div>
-              <h3 className="font-semibold">Sectors at Risk</h3>
-              <div className="flex flex-wrap gap-1 mt-1">
-                {result.sectorsAtRisk.map((sector, index) => (
-                  <span key={index} className="text-xs bg-destructive/10 text-destructive-foreground/80 px-2 py-1 rounded-full">{sector}</span>
-                ))}
+                <div>
+                  <h3 className="font-semibold">Sectors at Risk</h3>
+                  <div className="flex flex-wrap gap-1 mt-1">
+                    {result.sectorsAtRisk.map((sector, index) => (
+                      <span key={index} className="text-xs bg-destructive/10 text-destructive-foreground/80 px-2 py-1 rounded-full">{sector}</span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Skills at Risk</h3>
+                   <div className="flex flex-wrap gap-1 mt-1">
+                    {result.skillsAtRisk.map((skill, index) => (
+                      <span key={index} className="text-xs bg-destructive/10 text-destructive-foreground/80 px-2 py-1 rounded-full">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Mitigation Strategies</h3>
+                  <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-muted-foreground">
+                    {result.mitigationStrategies.map((rec, index) => (
+                      <li key={index}>{rec}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </div>
-            <div>
-              <h3 className="font-semibold">Skills at Risk</h3>
-               <div className="flex flex-wrap gap-1 mt-1">
-                {result.skillsAtRisk.map((skill, index) => (
-                  <span key={index} className="text-xs bg-destructive/10 text-destructive-foreground/80 px-2 py-1 rounded-full">{skill}</span>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="font-semibold">Mitigation Strategies</h3>
-              <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-muted-foreground">
-                {result.mitigationStrategies.map((rec, index) => (
-                  <li key={index}>{rec}</li>
-                ))}
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+          )}
+           <DialogFooter>
+            <Button variant="outline" onClick={handleDownload}>
+              <Download className="mr-2 h-4 w-4" />
+              Download
+            </Button>
+            <DialogClose asChild>
+              <Button>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
