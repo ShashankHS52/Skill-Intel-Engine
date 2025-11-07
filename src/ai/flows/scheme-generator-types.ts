@@ -1,4 +1,3 @@
-'use server';
 /**
  * @fileOverview Defines the types and schemas for the scheme generator AI agent.
  */
