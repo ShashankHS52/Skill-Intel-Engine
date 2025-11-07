@@ -9,8 +9,8 @@
     {
       "id": "heatmap-bg",
       "description": "Background image for the geographical heatmap",
-      "imageUrl": "https://images.unsplash.com/photo-1733094151451-4222a842cfd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxJbmRpYSUyMG1hcHxlbnwwfHx8fDE3NjI0OTUwOTh8MA&ixlib=rb-4.1.0&q=80&w=1080",
-      "imageHint": "India map"
+      "imageUrl": "https://images.unsplash.com/photo-1621243764882-65825d045811?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxJbmRpYSUyMG1hcCUyMG91dGxpbmV8ZW58MHx8fHwxNzYyODU0MDUzfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "India map outline"
     }
   ]
 }
