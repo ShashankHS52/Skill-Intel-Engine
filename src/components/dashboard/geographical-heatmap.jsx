@@ -7,7 +7,6 @@ import { Tooltip } from 'react-tooltip'
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { IndiaMap } from './india-map';
 
 const INDIA_TOPO_JSON = require('./india.topo.json');
 
