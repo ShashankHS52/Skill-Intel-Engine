@@ -15,6 +15,7 @@ import {
   FolderKanban,
 } from 'lucide-react';
 
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -102,10 +103,12 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <SidebarMenuSubButton>
-                    <Briefcase className="mr-2" />
-                    New Projects
-                  </SidebarMenuSubButton>
+                  <Link href="/projects/new">
+                    <SidebarMenuSubButton>
+                      <Briefcase className="mr-2" />
+                      New Projects
+                    </SidebarMenuSubButton>
+                  </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <SidebarMenuSubButton>
