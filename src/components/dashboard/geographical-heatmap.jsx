@@ -1,112 +1,88 @@
 'use client';
 
-import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {PlaceHolderImages} from '@/lib/placeholder-images';
+import React, { useState } from 'react';
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+} from 'react-simple-maps';
+import { scaleQuantile } from 'd3-scale';
+import { Tooltip } from 'react-tooltip';
 
-const heatmapBg = PlaceHolderImages.find(p => p.id === 'heatmap-bg');
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import INDIA_TOPO_JSON from '@/lib/india.topo.json';
 
-const skillGapData = {
-  north: 'high',
-  south: 'medium',
-  east: 'low',
-  west: 'high',
-  central: 'medium'
+const PROJECTION_CONFIG = {
+  scale: 800,
+  center: [82.5, 23.5],
 };
 
-const getRegionColor = (region) => {
-  switch (skillGapData[region]) {
-    case 'high':
-      return 'bg-red-500/70';
-    case 'medium':
-      return 'bg-yellow-500/70';
-    case 'low':
-      return 'bg-green-500/70';
-    default:
-      return 'bg-gray-500/70';
-  }
+const COLOR_RANGE = [
+  '#e0f8f8',
+  '#b3e0e0',
+  '#80c7c7',
+  '#4daaaa',
+  '#1a8d8d',
+  '#008080',
+  '#006666',
+  '#004d4d',
+  '#003333',
+];
+
+const DEFAULT_COLOR = '#EEE';
+
+const geographyStyle = {
+  default: {
+    outline: 'none',
+  },
+  hover: {
+    fill: '#FF7F50',
+    transition: 'all 250ms',
+    outline: 'none',
+  },
+  pressed: {
+    outline: 'none',
+  },
 };
 
-export default function GeographicalHeatmap() {
-  return (
-    <Card className="h-full">
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle>Geographical Insights</CardTitle>
-            <CardDescription>Unemployment rates and skill shortages across regions.</CardDescription>
-          </div>
-          <div className="flex gap-2 mt-4 sm:mt-0">
-            <Select defaultValue="skill_shortage">
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="Metric" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="unemployment">Unemployment</SelectItem>
-                <SelectItem value="skill_shortage">Skill Shortage</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select defaultValue="all">
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="District" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All India</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="relative w-full h-[400px] flex items-center justify-center">
-            {heatmapBg && (
-                <Image
-                src={heatmapBg.imageUrl}
-                alt="India Map"
-                layout="fill"
-                objectFit="contain"
-                data-ai-hint={heatmapBg.imageHint}
-                />
-            )}
-            <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 gap-4 p-4">
-                {/* North */}
-                <div className={`relative col-start-2 row-start-1 flex items-center justify-center`}>
-                    <div className={`h-8 w-8 rounded-full ${getRegionColor('north')}`}></div>
-                </div>
-                {/* West */}
-                <div className="relative col-start-1 row-start-2 flex items-center justify-center">
-                    <div className={`h-8 w-8 rounded-full ${getRegionColor('west')}`}></div>
-                </div>
-                {/* Central */}
-                <div className="relative col-start-2 row-start-2 flex items-center justify-center">
-                    <div className={`h-8 w-8 rounded-full ${getRegionColor('central')}`}></div>
-                </div>
-                {/* East */}
-                <div className="relative col-start-3 row-start-2 flex items-center justify-center">
-                    <div className={`h-8 w-8 rounded-full ${getRegionColor('east')}`}></div>
-                </div>
-                {/* South */}
-                <div className="relative col-start-2 row-start-3 flex items-center justify-center">
-                    <div className={`h-8 w-8 rounded-full ${getRegionColor('south')}`}></div>
-                </div>
-            </div>
-        </div>
-        <div className="flex justify-center items-center space-x-4 mt-4 text-xs">
-          <div className="flex items-center space-x-2">
-            <div className="h-4 w-4 rounded-full bg-red-500/70"></div>
-            <span>High Skill Gap</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="h-4 w-4 rounded-full bg-yellow-500/70"></div>
-            <span>Medium Skill Gap</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="h-4 w-4 rounded-full bg-green-500/70"></div>
-            <span>Low Skill Gap</span>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+const getHeatMapData = () => {
+  return [
+    { id: 'AP', state: 'Andhra Pradesh', value: 15 },
+    { id: 'AR', state: 'Arunachal Pradesh', value: 20 },
+    { id: 'AS', state: 'Assam', value: 35 },
+    { id: 'BR', state: 'Bihar', value: 85 },
+    { id: 'CT', state: 'Chhattisgarh', value: 40 },
+    { id: 'GA', state: 'Goa', value: 10 },
+    { id: 'GJ', state: 'Gujarat', value: 25 },
+    { id: 'HR', state: 'Haryana', value: 30 },
+    { id: 'HP', state: 'Himachal Pradesh', value: 18 },
+    { id: 'JH', state: 'Jharkhand', value: 75 },
+    { id: 'KA', state: 'Karnataka', value: 28 },
+    { id: 'KL', state: 'Kerala', value: 12 },
+    { id: 'MP', state: 'Madhya Pradesh', value: 60 },
+    { id: 'MH', state: 'Maharashtra', value: 45 },
+    { id: 'MN', state: 'Manipur', value: 42 },
+    { id: 'ML', state: 'Meghalaya', value: 38 },
+    { id: 'MZ', state: 'Mizoram', value: 33 },
+    { id: 'NL', state: 'Nagaland', value: 48 },
+    { id: 'OR', state: 'Odisha', value: 65 },
+    { id: 'PB', state: 'Punjab', value: 22 },
+    { id: 'RJ', state: 'Rajasthan', value: 55 },
+    { id: 'SK', state: 'Sikkim', value: 19 },
+    { id: 'TN', state: 'Tamil Nadu', value: 29 },
+    { id: 'TG', state: 'Telangana', value: 32 },
+    { id: 'TR', state: 'Tripura', value: 43 },
+    { id: 'UT', state: 'Uttarakhand', value
