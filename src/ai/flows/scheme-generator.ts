@@ -47,6 +47,7 @@ Based on your analysis of these projects and tenders, perform the following step
 For each suggested scheme, provide the following details:
 - **Scheme Name**: A creative and fitting name for the scheme.
 - **Scheme Description**: A detailed description of the scheme, its purpose, and how it will work.
+- **Objectives**: A list of key objectives for the new scheme.
 - **Predicted Skill Gaps**: The specific future skills this scheme will address.
 - **Upskilling Strategy**: A concise strategy for how the scheme will train and upskill the workforce.
 - **Target Beneficiaries**: A description of the primary target audience (e.g., ITI graduates, rural youth, etc.).
