@@ -1,9 +1,14 @@
-import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import {PlaceHolderImages} from '@/lib/placeholder-images';
+import { IndiaMap } from './india-map';
 
-const mapImage = PlaceHolderImages.find(p => p.id === 'heatmap-bg');
+const skillGapData = {
+  north: 'high',
+  south: 'critical',
+  west: 'medium',
+  east: 'low',
+  central: 'medium'
+};
 
 export default function GeographicalHeatmap() {
   return (
@@ -41,36 +46,25 @@ export default function GeographicalHeatmap() {
       </CardHeader>
       <CardContent>
         <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden border">
-          {mapImage && (
-            <Image
-                src={mapImage.imageUrl}
-                alt="Geographical Heatmap of India"
-                fill
-                style={{ objectFit: 'contain' }}
-                data-ai-hint={mapImage.imageHint}
-            />
-          )}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <p className="text-muted-foreground font-semibold bg-background/80 px-4 py-2 rounded-lg opacity-0">
-              Skill Gap Heatmap
-            </p>
-          </div>
-          {/* Mock heatmap points for skill gaps in India */}
-          <div className="absolute top-[28%] left-[43%]" title="Delhi: High demand for AI/ML skills">
-            <div className="w-5 h-5 bg-red-500/50 rounded-full animate-pulse"></div>
-          </div>
-          <div className="absolute top-[75%] left-[45%]" title="Bangalore: Critical shortage of Data Scientists">
-            <div className="w-8 h-8 bg-red-600/60 rounded-full animate-pulse delay-200"></div>
-          </div>
-          <div className="absolute top-[55%] left-[30%]" title="Mumbai: Need for financial analysts">
-            <div className="w-7 h-7 bg-orange-600/60 rounded-full animate-pulse delay-400"></div>
-          </div>
-          <div className="absolute top-[48%] left-[68%]" title="Kolkata: Growing need for digital marketing skills">
-            <div className="w-4 h-4 bg-yellow-500/50 rounded-full animate-pulse delay-100"></div>
-          </div>
-          <div className="absolute top-[85%] left-[48%]" title="Chennai: Surplus of IT support staff">
-            <div className="w-5 h-5 bg-green-500/50 rounded-full animate-pulse delay-300"></div>
-          </div>
+          <IndiaMap data={skillGapData} />
+        </div>
+         <div className="flex justify-end items-center gap-4 text-xs mt-2 text-muted-foreground">
+            <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-green-500/70"></div>
+                <span>Low</span>
+            </div>
+             <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
+                <span>Medium</span>
+            </div>
+             <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-orange-600/70"></div>
+                <span>High</span>
+            </div>
+             <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-full bg-red-600/70"></div>
+                <span>Critical</span>
+            </div>
         </div>
       </CardContent>
     </Card>
