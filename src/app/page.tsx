@@ -111,10 +111,12 @@ function AppSidebar() {
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <SidebarMenuSubButton>
-                    <FileText className="mr-2" />
-                    Tender
-                  </SidebarMenuSubButton>
+                  <Link href="/projects/tender">
+                    <SidebarMenuSubButton>
+                      <FileText className="mr-2" />
+                      Tender
+                    </SidebarMenuSubButton>
+                  </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <SidebarMenuSubButton>

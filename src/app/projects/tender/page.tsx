@@ -14,9 +14,9 @@ import {
   Settings,
   BookCheck,
   Loader2,
-  MapPin,
   Users,
-  CircleDollarSign,
+  Building,
+  ClipboardList,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -51,36 +51,40 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { analyzeProject } from '@/app/actions/project-analyzer';
-import { ProjectAnalyzerOutput } from '@/ai/flows/project-analyzer';
+import { analyzeTender } from '@/app/actions/tender-analyzer';
+import { TenderAnalyzerOutput } from '@/ai/flows/tender-analyzer';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
-const upcomingProjects = [
+const upcomingTenders = [
   {
-    id: 'proj-001',
-    name: 'National Digital Health Mission',
-    description: 'To develop the backbone necessary to support the integrated digital health infrastructure of the country.',
-    agency: 'Ministry of Health and Family Welfare',
+    id: 'ten-001',
+    name: 'Construction of Rural Roads under PMGSY',
+    description: 'Tender for the construction and maintenance of all-weather rural roads in the state of Uttar Pradesh.',
+    field: 'Construction',
+    location: 'Uttar Pradesh',
   },
   {
-    id: 'proj-002',
-    name: 'Smart Cities Mission 2.0',
-    description: 'Expansion of the Smart Cities Mission to cover 100 new cities, focusing on sustainable and inclusive development.',
-    agency: 'Ministry of Housing and Urban Affairs',
+    id: 'ten-002',
+    name: 'IT Infrastructure Upgrade for Municipal Corporations',
+    description: 'Supply, installation, and maintenance of IT hardware and networking solutions for municipal offices in Maharashtra.',
+    field: 'IT & Networking',
+    location: 'Maharashtra',
   },
   {
-    id: 'proj-003',
-    name: 'Gaganyaan Programme',
-    description: 'An Indian crewed orbital spacecraft mission to demonstrate indigenous capability to undertake human space flight.',
-    agency: 'Indian Space Research Organisation (ISRO)',
+    id: 'ten-003',
+    name: 'Healthcare Waste Management Services',
+    description: 'A tender for the collection, transportation, treatment, and disposal of biomedical waste from government hospitals in Kerala.',
+    field: 'Healthcare & Waste Management',
+    location: 'Kerala',
   },
   {
-    id: 'proj-004',
-    name: 'National River Linking Project',
-    description: 'A large-scale engineering project to link Indian rivers by a network of reservoirs and canals to reduce floods and water shortage.',
-    agency: 'Ministry of Jal Shakti',
+    id: 'ten-004',
+    name: 'Solar Power Plant Installation in Rajasthan',
+    description: 'Tender for the setup of a 50 MW solar power plant, including land acquisition, installation, and commissioning.',
+    field: 'Renewable Energy',
+    location: 'Rajasthan',
   },
 ];
 
@@ -135,7 +139,7 @@ function AppSidebar() {
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
                   <Link href="/projects/new">
-                    <SidebarMenuSubButton isActive>
+                    <SidebarMenuSubButton>
                       <Briefcase className="mr-2" />
                       New Projects
                     </SidebarMenuSubButton>
@@ -143,7 +147,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/tender">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
@@ -216,25 +220,25 @@ function AppHeader() {
   );
 }
 
-export default function NewProjectsPage() {
-  const [analysisResult, setAnalysisResult] = useState<ProjectAnalyzerOutput | null>(null);
-  const [loadingProjectId, setLoadingProjectId] = useState<string | null>(null);
+export default function TenderPage() {
+  const [analysisResult, setAnalysisResult] = useState<TenderAnalyzerOutput | null>(null);
+  const [loadingTenderId, setLoadingTenderId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleAnalyzeClick = async (project: { name: string; description: string; id: string }) => {
-    setLoadingProjectId(project.id);
+  const handleAnalyzeClick = async (tender: { id: string; field: string; location: string }) => {
+    setLoadingTenderId(tender.id);
     setAnalysisResult(null);
     try {
-      const result = await analyzeProject({
-        projectName: project.name,
-        projectDescription: project.description,
+      const result = await analyzeTender({
+        tenderField: tender.field,
+        location: tender.location,
       });
       setAnalysisResult(result);
       setIsDialogOpen(true);
     } catch (error) {
-      console.error("Error analyzing project:", error);
+      console.error("Error analyzing tender:", error);
     } finally {
-      setLoadingProjectId(null);
+      setLoadingTenderId(null);
     }
   };
 
@@ -252,26 +256,26 @@ export default function NewProjectsPage() {
                   <span className="sr-only">Back</span>
                 </Button>
               </Link>
-              <h1 className="font-semibold text-xl md:text-2xl">Upcoming Government Projects</h1>
+              <h1 className="font-semibold text-xl md:text-2xl">Government Tenders</h1>
             </div>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {upcomingProjects.map(project => (
-                <Card key={project.id}>
+              {upcomingTenders.map(tender => (
+                <Card key={tender.id}>
                   <CardHeader>
-                    <CardTitle>{project.name}</CardTitle>
-                    <CardDescription>{project.agency}</CardDescription>
+                    <CardTitle>{tender.name}</CardTitle>
+                    <CardDescription>{tender.location}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-3">{project.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-3">{tender.description}</p>
                   </CardContent>
                   <CardFooter>
                     <Button
                       className="w-full"
-                      onClick={() => handleAnalyzeClick(project)}
-                      disabled={loadingProjectId === project.id}
+                      onClick={() => handleAnalyzeClick(tender)}
+                      disabled={loadingTenderId === tender.id}
                     >
-                      {loadingProjectId === project.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {loadingProjectId === project.id ? 'Analyzing...' : 'Use AI to Analyze'}
+                      {loadingTenderId === tender.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {loadingTenderId === tender.id ? 'Analyzing...' : 'Use AI to Analyze'}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -282,31 +286,35 @@ export default function NewProjectsPage() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
-              <DialogTitle>Project Analysis</DialogTitle>
+              <DialogTitle>Tender Analysis for Local Employment</DialogTitle>
             </DialogHeader>
             {analysisResult && (
               <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
                 <div>
                   <h3 className="font-semibold flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" /> Best Region
-                  </h3>
-                  <p className="text-sm text-foreground mt-2 pl-7">{analysisResult.bestRegion}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" /> Qualified Employees
+                    <Building className="h-5 w-5 text-primary" /> Target Industries & Roles
                   </h3>
                   <ul className="list-disc pl-12 mt-2 space-y-1 text-sm text-foreground">
-                    {analysisResult.qualifiedEmployees.map((skill, index) => (
-                      <li key={index}>{skill}</li>
+                    {analysisResult.targetIndustriesAndRoles.map((role, index) => (
+                      <li key={index}>{role}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
                   <h3 className="font-semibold flex items-center gap-2">
-                    <CircleDollarSign className="h-5 w-5 text-primary" /> Cost Effectiveness
+                    <Users className="h-5 w-5 text-primary" /> Potential Local Workforce
                   </h3>
-                  <p className="text-sm text-foreground mt-2 pl-7">{analysisResult.costEffectiveness}</p>
+                  <ul className="list-disc pl-12 mt-2 space-y-1 text-sm text-foreground">
+                    {analysisResult.potentialLocalWorkforce.map((workforce, index) => (
+                      <li key={index}>{workforce}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <ClipboardList className="h-5 w-5 text-primary" /> Job Matching Strategy
+                  </h3>
+                  <p className="text-sm text-foreground mt-2 pl-7">{analysisResult.jobMatchingStrategy}</p>
                 </div>
               </div>
             )}
