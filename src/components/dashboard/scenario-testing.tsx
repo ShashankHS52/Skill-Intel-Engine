@@ -146,11 +146,11 @@ export default function ScenarioTesting() {
              <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
               <div>
                 <h3 className="font-semibold flex items-center gap-2"><TrendingUp className="h-5 w-5 text-primary" /> Projected Skill Demand Changes</h3>
-                <p className="text-sm text-muted-foreground mt-2 pl-7">{result.projectedSkillDemandChanges}</p>
+                <p className="text-sm text-foreground mt-2 pl-7">{result.projectedSkillDemandChanges}</p>
               </div>
               <div>
                 <h3 className="font-semibold flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-primary" /> Policy Recommendations</h3>
-                <p className="text-sm text-muted-foreground mt-2 pl-7">{result.policyRecommendations}</p>
+                <p className="text-sm text-foreground mt-2 pl-7">{result.policyRecommendations}</p>
               </div>
             </div>
           )}

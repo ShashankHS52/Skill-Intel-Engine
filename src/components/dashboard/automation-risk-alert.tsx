@@ -168,28 +168,20 @@ export default function AutomationRiskAlert() {
                     <h3 className="font-semibold text-sm">Affected Population</h3>
                     <div className="flex items-center gap-2 mt-1">
                         <Progress value={result.affectedPopulationPercentage} className="w-full h-2" />
-                        <span className="font-bold text-sm">{result.affectedPopulationPercentage}%</span>
+                        <span className="font-bold text-sm text-foreground">{result.affectedPopulationPercentage}%</span>
                     </div>
                 </div>
                 <div>
                   <h3 className="font-semibold">Sectors at Risk</h3>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {result.sectorsAtRisk.map((sector, index) => (
-                      <span key={index} className="text-xs bg-destructive/10 text-destructive-foreground/80 px-2 py-1 rounded-full">{sector}</span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-foreground">{result.sectorsAtRisk.join(', ')}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Skills at Risk</h3>
-                   <div className="flex flex-wrap gap-1 mt-1">
-                    {result.skillsAtRisk.map((skill, index) => (
-                      <span key={index} className="text-xs bg-destructive/10 text-destructive-foreground/80 px-2 py-1 rounded-full">{skill}</span>
-                    ))}
-                  </div>
+                  <p className="text-sm text-foreground">{result.skillsAtRisk.join(', ')}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold">Mitigation Strategies</h3>
-                  <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-muted-foreground">
+                  <ul className="list-disc pl-5 mt-2 space-y-1 text-sm text-foreground">
                     {result.mitigationStrategies.map((rec, index) => (
                       <li key={index}>{rec}</li>
                     ))}

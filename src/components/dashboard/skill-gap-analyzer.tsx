@@ -179,11 +179,11 @@ export default function SkillGapAnalyzer() {
             <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
               <div>
                 <h3 className="font-semibold flex items-center gap-2"><Lightbulb className="h-5 w-5 text-primary" /> Summary</h3>
-                <p className="text-sm text-muted-foreground mt-2 pl-7">{result.analysisSummary}</p>
+                <p className="text-sm text-foreground mt-2 pl-7">{result.analysisSummary}</p>
               </div>
               <div>
                 <h3 className="font-semibold">Policy Recommendations</h3>
-                <ul className="mt-2 space-y-2 text-sm text-muted-foreground">
+                <ul className="mt-2 space-y-2 text-sm text-foreground">
                   {result.policyRecommendations.map((rec, index) => (
                     <li key={index} className="flex items-start gap-2">
                         <CheckCircle className="h-4 w-4 mt-0.5 text-green-500 flex-shrink-0" />
