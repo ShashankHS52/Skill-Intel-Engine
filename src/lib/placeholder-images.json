@@ -1,3 +1,16 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "user-avatar",
+      "description": "User avatar for the header",
+      "imageUrl": "https://images.unsplash.com/photo-1630910561339-4e22c7150093?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxwZXJzb24lMjBhdmF0YXJ8ZW58MHx8fHwxNzYyNTM1MDgwfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person avatar"
+    },
+    {
+      "id": "heatmap-bg",
+      "description": "Background image for the geographical heatmap",
+      "imageUrl": "https://images.unsplash.com/photo-1599224155845-dc51a9467d40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw1fHxyZWdpb24lMjBtYXB8ZW58MHx8fHwxNzYyNTUwODY4fDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "region map"
+    }
+  ]
 }
