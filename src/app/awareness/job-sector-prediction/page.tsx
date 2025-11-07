@@ -13,17 +13,15 @@ import {
   Lightbulb,
   Search,
   Settings,
-  BookCheck,
-  Loader2,
-  Users,
-  Building,
-  ClipboardList,
   TrendingUp,
   AlertTriangle,
+  Loader2,
+  Download,
+  Sparkles,
+  CheckCircle,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
@@ -54,42 +52,42 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { analyzeTender } from '@/app/actions/tender-analyzer';
-import { TenderAnalyzerOutput } from '@/ai/flows/tender-analyzer';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from '@/components/ui/dialog';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { jobSectorPrediction, JobSectorPredictionOutput } from '@/app/actions/job-sector-prediction';
+
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
-export const upcomingTenders = [
-  {
-    id: 'ten-001',
-    name: 'Construction of Rural Roads under PMGSY',
-    description: 'Tender for the construction and maintenance of all-weather rural roads in the state of Uttar Pradesh.',
-    field: 'Construction',
-    location: 'Uttar Pradesh',
-  },
-  {
-    id: 'ten-002',
-    name: 'IT Infrastructure Upgrade for Municipal Corporations',
-    description: 'Supply, installation, and maintenance of IT hardware and networking solutions for municipal offices in Maharashtra.',
-    field: 'IT & Networking',
-    location: 'Maharashtra',
-  },
-  {
-    id: 'ten-003',
-    name: 'Healthcare Waste Management Services',
-    description: 'A tender for the collection, transportation, treatment, and disposal of biomedical waste from government hospitals in Kerala.',
-    field: 'Healthcare & Waste Management',
-    location: 'Kerala',
-  },
-  {
-    id: 'ten-004',
-    name: 'Solar Power Plant Installation in Rajasthan',
-    description: 'Tender for the setup of a 50 MW solar power plant, including land acquisition, installation, and commissioning.',
-    field: 'Renewable Energy',
-    location: 'Rajasthan',
-  },
-];
+const formSchema = z.object({
+  industry: z.string().min(2, { message: 'Industry is required.' }),
+  timeHorizon: z.string().min(2, { message: 'Time horizon is required.' }),
+});
 
 function AppSidebar() {
   return (
@@ -129,7 +127,7 @@ function AppSidebar() {
           <Collapsible>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Projects" className="justify-between" isActive>
+                <SidebarMenuButton tooltip="Projects" className="justify-between">
                   <div className="flex items-center gap-2">
                     <FolderKanban />
                     Projects
@@ -150,7 +148,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/tender">
-                    <SidebarMenuSubButton isActive>
+                    <SidebarMenuSubButton>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
@@ -170,7 +168,7 @@ function AppSidebar() {
           <Collapsible>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Awareness" className="justify-between">
+                <SidebarMenuButton tooltip="Awareness" className="justify-between" isActive>
                   <div className="flex items-center gap-2">
                     <TrendingUp />
                     Awareness
@@ -183,7 +181,7 @@ function AppSidebar() {
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
                   <Link href="/awareness/job-sector-prediction">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive>
                       <TrendingUp className="mr-2" />
                       Job Sector Prediction
                     </SidebarMenuSubButton>
@@ -252,25 +250,44 @@ function AppHeader() {
   );
 }
 
-export default function TenderPage() {
-  const [analysisResult, setAnalysisResult] = useState<TenderAnalyzerOutput | null>(null);
-  const [loadingTenderId, setLoadingTenderId] = useState<string | null>(null);
+export default function JobSectorPredictionPage() {
+  const [analysisResult, setAnalysisResult] = useState<JobSectorPredictionOutput | null>(null);
+  const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleAnalyzeClick = async (tender: { id: string; field: string; location: string }) => {
-    setLoadingTenderId(tender.id);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      industry: 'All',
+      timeHorizon: 'Long-term',
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     setAnalysisResult(null);
     try {
-      const result = await analyzeTender({
-        tenderField: tender.field,
-        location: tender.location,
-      });
+      const result = await jobSectorPrediction(values);
       setAnalysisResult(result);
       setIsDialogOpen(true);
     } catch (error) {
-      console.error("Error analyzing tender:", error);
+      console.error("Error predicting job sectors:", error);
     } finally {
-      setLoadingTenderId(null);
+      setLoading(false);
+    }
+  }
+
+  const handleDownload = () => {
+    if (analysisResult) {
+      const blob = new Blob([JSON.stringify(analysisResult, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'job-sector-prediction.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }
   };
 
@@ -288,75 +305,124 @@ export default function TenderPage() {
                   <span className="sr-only">Back</span>
                 </Button>
               </Link>
-              <h1 className="font-semibold text-xl md:text-2xl">Government Tenders</h1>
+              <div>
+                <h1 className="font-semibold text-xl md:text-2xl">Job Sector Prediction</h1>
+                <p className="text-sm text-muted-foreground">Use AI to predict emerging job sectors and required skills.</p>
+              </div>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {upcomingTenders.map(tender => (
-                <Card key={tender.id}>
-                  <CardHeader>
-                    <CardTitle>{tender.name}</CardTitle>
-                    <CardDescription>{tender.location}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-3">{tender.description}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      className="w-full"
-                      onClick={() => handleAnalyzeClick(tender)}
-                      disabled={loadingTenderId === tender.id}
-                    >
-                      {loadingTenderId === tender.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {loadingTenderId === tender.id ? 'Analyzing...' : 'Use AI to Analyze'}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+            
+            <Card className="max-w-2xl mx-auto w-full">
+                <CardHeader>
+                    <CardTitle>Predict Future Job Sectors</CardTitle>
+                    <CardDescription>Select an industry and time horizon to get AI-powered predictions on emerging job sectors and skills.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                             <FormField
+                                control={form.control}
+                                name="industry"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Industry</FormLabel>
+                                    <FormControl>
+                                    <Input placeholder="e.g., Technology, Healthcare, or 'All'" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="timeHorizon"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Time Horizon</FormLabel>
+                                    <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    >
+                                    <FormControl>
+                                        <SelectTrigger>
+                                        <SelectValue placeholder="Select a horizon" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="Short-term">Short-term (1-3 years)</SelectItem>
+                                        <SelectItem value="Mid-term">Mid-term (3-5 years)</SelectItem>
+                                        <SelectItem value="Long-term">Long-term (5+ years)</SelectItem>
+                                    </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <Button type="submit" disabled={loading} className="w-full">
+                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                {loading ? 'Predicting...' : 'Predict Now'}
+                            </Button>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+
           </main>
         </SidebarInset>
+        
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-lg">
+          <DialogContent className="sm:max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Tender Analysis for Local Employment</DialogTitle>
+              <DialogTitle className="flex items-center gap-2 text-2xl">
+                <Sparkles className="h-7 w-7 text-primary" />
+                Job Sector Prediction Analysis
+              </DialogTitle>
             </DialogHeader>
             {analysisResult && (
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Building className="h-5 w-5 text-primary" /> Target Industries & Roles
-                  </h3>
-                  <ul className="list-disc pl-12 mt-2 space-y-1 text-sm text-foreground">
-                    {analysisResult.targetIndustriesAndRoles.map((role, index) => (
-                      <li key={index}>{role}</li>
-                    ))}
-                  </ul>
+              <div className="space-y-6 max-h-[70vh] overflow-y-auto p-1 pr-4">
+                  <div>
+                    <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-5 w-5 text-primary" /> Emerging Job Sectors
+                    </h3>
+                    <div className="flex flex-wrap gap-2 pl-7">
+                        {analysisResult.emergingSectors.map((sector, index) => (
+                        <span key={index} className="text-sm bg-primary/10 text-primary-foreground/80 px-3 py-1 rounded-full">{sector}</span>
+                        ))}
+                    </div>
                 </div>
                 <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" /> Potential Local Workforce
+                  <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
+                     <Lightbulb className="h-5 w-5 text-primary" /> In-Demand Skills
                   </h3>
-                  <ul className="list-disc pl-12 mt-2 space-y-1 text-sm text-foreground">
-                    {analysisResult.potentialLocalWorkforce.map((workforce, index) => (
-                      <li key={index}>{workforce}</li>
+                  <div className="flex flex-wrap gap-2 pl-7">
+                    {analysisResult.inDemandSkills.map((skill, index) => (
+                      <span key={index} className="text-sm bg-secondary text-secondary-foreground px-3 py-1 rounded-full">{skill}</span>
                     ))}
-                  </ul>
+                  </div>
                 </div>
                 <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <ClipboardList className="h-5 w-5 text-primary" /> Job Matching Strategy
+                  <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
+                    <CheckCircle className="h-5 w-5 text-primary" /> Preparedness Recommendations
                   </h3>
-                  <p className="text-sm text-foreground mt-2 pl-7">{analysisResult.jobMatchingStrategy}</p>
+                  <ul className="list-disc pl-12 space-y-1 text-sm text-foreground">
+                    {analysisResult.preparednessRecommendations.map((rec, index) => (
+                      <li key={index}>{rec}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}
             <DialogFooter>
+              <Button variant="outline" onClick={handleDownload}>
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
               <DialogClose asChild>
                 <Button>Close</Button>
               </DialogClose>
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
       </div>
     </SidebarProvider>
   );

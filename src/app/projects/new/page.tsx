@@ -178,16 +178,20 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <SidebarMenuSubButton>
-                    <TrendingUp className="mr-2" />
-                    Job Sector Prediction
-                  </SidebarMenuSubButton>
+                  <Link href="/awareness/job-sector-prediction">
+                    <SidebarMenuSubButton>
+                      <TrendingUp className="mr-2" />
+                      Job Sector Prediction
+                    </SidebarMenuSubButton>
+                  </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <SidebarMenuSubButton>
-                    <AlertTriangle className="mr-2" />
-                    Job Risk Awareness
-                  </SidebarMenuSubButton>
+                  <Link href="/awareness/job-risk-awareness">
+                    <SidebarMenuSubButton>
+                      <AlertTriangle className="mr-2" />
+                      Job Risk Awareness
+                    </SidebarMenuSubButton>
+                  </Link>
                 </SidebarMenuSubItem>
               </SidebarMenuSub>
             </CollapsibleContent>
