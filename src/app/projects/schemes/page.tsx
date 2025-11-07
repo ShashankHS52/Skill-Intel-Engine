@@ -58,9 +58,11 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { generateScheme } from '@/app/actions/scheme-generator';
-import { SchemeGeneratorOutput } from '@/ai/flows/scheme-generator';
+import type { SchemeGeneratorOutput } from '@/ai/flows/scheme-generator-types';
 import { upcomingProjects } from '../new/page';
 import { upcomingTenders } from '../tender/page';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
