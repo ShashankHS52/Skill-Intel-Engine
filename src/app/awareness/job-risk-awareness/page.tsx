@@ -325,9 +325,24 @@ export default function JobRiskAwarenessPage() {
                                 render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Economic Sector</FormLabel>
+                                    <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    >
                                     <FormControl>
-                                    <Input placeholder="e.g., Manufacturing, Retail" {...field} />
+                                        <SelectTrigger>
+                                        <SelectValue placeholder="Select a sector" />
+                                        </SelectTrigger>
                                     </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="Retail">Retail</SelectItem>
+                                        <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                                        <SelectItem value="IT Services">IT Services</SelectItem>
+                                        <SelectItem value="Healthcare">Healthcare</SelectItem>
+                                        <SelectItem value="Construction">Construction</SelectItem>
+                                        <SelectItem value="Finance">Finance</SelectItem>
+                                    </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                                 )}

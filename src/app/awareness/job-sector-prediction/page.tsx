@@ -325,9 +325,24 @@ export default function JobSectorPredictionPage() {
                                 render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Industry</FormLabel>
+                                    <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                    >
                                     <FormControl>
-                                    <Input placeholder="e.g., Technology, Healthcare, or 'All'" {...field} />
+                                        <SelectTrigger>
+                                        <SelectValue placeholder="Select an industry" />
+                                        </SelectTrigger>
                                     </FormControl>
+                                    <SelectContent>
+                                        <SelectItem value="All">All Industries</SelectItem>
+                                        <SelectItem value="Technology">Technology</SelectItem>
+                                        <SelectItem value="Healthcare">Healthcare</SelectItem>
+                                        <SelectItem value="Finance">Finance</SelectItem>
+                                        <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                                        <SelectItem value="Retail">Retail</SelectItem>
+                                    </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                                 )}
