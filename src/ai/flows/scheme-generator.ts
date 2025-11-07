@@ -1,6 +1,6 @@
 'use server';
 /**
- * @fileOverview An AI agent that generates new government schemes.
+ * @fileOverview An AI agent that generates new government schemes by analyzing existing projects and tenders.
  *
  * - generateScheme - A function that handles the scheme generation process.
  * - SchemeGeneratorInput - The input type for the generateScheme function.
@@ -23,11 +23,9 @@ const prompt = ai.definePrompt({
   name: 'schemeGeneratorPrompt',
   input: { schema: SchemeGeneratorInputSchema },
   output: { schema: SchemeGeneratorOutputSchema },
-  prompt: `You are an expert policy maker and government advisor in India. Your task is to generate a new, innovative government scheme for a specific field, taking into account the context of existing projects and tenders.
+  prompt: `You are an expert policy maker and government advisor in India. Your task is to analyze current government projects and tenders to identify future skill demands and propose new, innovative upskilling schemes.
 
-Field for New Scheme: {{{field}}}
-
-Analyze the following lists of current projects and tenders to identify gaps, opportunities, and synergies.
+Analyze the following lists of current projects and tenders:
 
 Existing Projects:
 {{#each projects}}
@@ -41,13 +39,19 @@ Existing Tenders:
   Description: {{description}}
 {{/each}}
 
-Based on this context, create a new scheme with the following components:
-1.  **Scheme Name**: A creative and fitting name for the new scheme.
-2.  **Scheme Description**: A detailed description of the scheme, its purpose, and how it will work.
-3.  **Objectives**: A list of key, measurable objectives for the scheme.
-4.  **Target Beneficiaries**: A description of the primary target audience or beneficiaries of this scheme.
+Based on your analysis of these projects and tenders, perform the following steps:
+1.  **Predict Future Skills**: Identify a list of new or emerging skills that will be in high demand to support these initiatives.
+2.  **Identify Gaps**: Determine the gap between the current workforce's skills and the predicted future needs.
+3.  **Generate Schemes**: Propose a list of 2-3 distinct upskilling schemes to address these gaps.
 
-Output the data in JSON format.
+For each suggested scheme, provide the following details:
+- **Scheme Name**: A creative and fitting name for the scheme.
+- **Scheme Description**: A detailed description of the scheme, its purpose, and how it will work.
+- **Predicted Skill Gaps**: The specific future skills this scheme will address.
+- **Upskilling Strategy**: A concise strategy for how the scheme will train and upskill the workforce.
+- **Target Beneficiaries**: A description of the primary target audience (e.g., ITI graduates, rural youth, etc.).
+
+Output the data in the specified JSON format.
 `,
 });
 

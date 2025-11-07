@@ -14,16 +14,20 @@ const TenderSchema = z.object({
 });
 
 export const SchemeGeneratorInputSchema = z.object({
-  field: z.string().describe('The field or industry for the new scheme (e.g., Renewable Energy, Rural Healthcare).'),
-  projects: z.array(ProjectSchema).describe('A list of current and upcoming projects in related fields.'),
-  tenders: z.array(TenderSchema).describe('A list of current and upcoming tenders in related fields.'),
+  projects: z.array(ProjectSchema).describe('A list of current and upcoming projects.'),
+  tenders: z.array(TenderSchema).describe('A list of current and upcoming tenders.'),
 });
 export type SchemeGeneratorInput = z.infer<typeof SchemeGeneratorInputSchema>;
 
-export const SchemeGeneratorOutputSchema = z.object({
+const SuggestedSchemeSchema = z.object({
   schemeName: z.string().describe('A creative and fitting name for the new scheme.'),
   schemeDescription: z.string().describe('A detailed description of the scheme, its purpose, and how it will work.'),
-  objectives: z.array(z.string()).describe('A list of key objectives for the scheme.'),
+  predictedSkillGaps: z.array(z.string()).describe('A list of future skills that will be in high demand based on the projects and tenders.'),
+  upskillingStrategy: z.string().describe('A strategy for upskilling the workforce to meet the predicted new skill demands.'),
   targetBeneficiaries: z.string().describe('A description of the primary target audience or beneficiaries of this scheme.'),
+});
+
+export const SchemeGeneratorOutputSchema = z.object({
+  suggestedSchemes: z.array(SuggestedSchemeSchema).describe('A list of suggested new schemes based on the analysis.'),
 });
 export type SchemeGeneratorOutput = z.infer<typeof SchemeGeneratorOutputSchema>;

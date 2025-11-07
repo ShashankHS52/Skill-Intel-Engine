@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
@@ -17,7 +17,8 @@ import {
   Sparkles,
   Target,
   Users,
-  ClipboardCheck,
+  Wrench,
+  GraduationCap
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -52,11 +53,6 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { generateScheme } from '@/app/actions/scheme-generator';
 import type { SchemeGeneratorOutput } from '@/ai/flows/scheme-generator-types';
 import { upcomingProjects } from '../new/page';
@@ -65,10 +61,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
-
-const formSchema = z.object({
-  field: z.string().min(3, { message: 'Field is required.' }),
-});
 
 function AppSidebar() {
   return (
@@ -208,30 +200,21 @@ export default function NewSchemesPage() {
   const [analysisResult, setAnalysisResult] = useState<SchemeGeneratorOutput | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      field: 'Rural Skill Development',
-    },
-  });
-
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const handleGenerateClick = async () => {
     setLoading(true);
     setAnalysisResult(null);
     try {
       const result = await generateScheme({
-        field: values.field,
         projects: upcomingProjects.map(p => ({ name: p.name, description: p.description })),
         tenders: upcomingTenders.map(t => ({ name: t.name, description: t.description })),
       });
       setAnalysisResult(result);
     } catch (error) {
-      console.error("Error generating scheme:", error);
+      console.error("Error generating schemes:", error);
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <SidebarProvider>
@@ -247,54 +230,37 @@ export default function NewSchemesPage() {
                   <span className="sr-only">Back</span>
                 </Button>
               </Link>
-              <h1 className="font-semibold text-xl md:text-2xl">AI-Powered Scheme Generator</h1>
+              <div>
+                <h1 className="font-semibold text-xl md:text-2xl">AI-Powered Scheme Suggester</h1>
+                <p className="text-sm text-muted-foreground">Get AI-driven suggestions for new upskilling schemes based on active projects and tenders.</p>
+              </div>
             </div>
-            
-            <div className="grid gap-8 md:grid-cols-2">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Generate a New Scheme</CardTitle>
-                  <CardDescription>Use AI to brainstorm a new government scheme based on existing projects and tenders.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="field"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Scheme Field / Sector</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., Renewable Energy, Women's Safety" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <p className="text-xs text-muted-foreground">The AI will use the full list of projects and tenders as context.</p>
-                      <Button type="submit" disabled={loading} className="w-full">
-                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {loading ? 'Generating...' : 'Generate with AI'}
-                      </Button>
-                    </form>
-                  </Form>
-                </CardContent>
-              </Card>
 
-              {loading && (
-                <Card>
+            <Card className="max-w-2xl mx-auto text-center">
+              <CardHeader>
+                  <CardTitle>Generate New Scheme Suggestions</CardTitle>
+                  <CardDescription>
+                      Click the button below to have AI analyze all current projects and tenders to suggest new upskilling schemes.
+                  </CardDescription>
+              </CardHeader>
+              <CardContent>
+                  <Button onClick={handleGenerateClick} disabled={loading}>
+                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {loading ? 'Analyzing & Generating...' : 'Suggest Schemes with AI'}
+                  </Button>
+              </CardContent>
+            </Card>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {loading && Array.from({ length: 3 }).map((_, index) => (
+                <Card key={index}>
                   <CardHeader>
-                    <Skeleton className="h-7 w-2/3" />
+                    <Skeleton className="h-7 w-3/4" />
                     <Skeleton className="h-4 w-full mt-2" />
+                    <Skeleton className="h-4 w-5/6 mt-1" />
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-4">
                      <div>
-                        <Skeleton className="h-6 w-1/3 mb-2" />
-                        <Skeleton className="h-4 w-full" />
-                        <Skeleton className="h-4 w-5/6 mt-1" />
-                     </div>
-                      <div>
                         <Skeleton className="h-6 w-1/3 mb-2" />
                         <Skeleton className="h-4 w-full" />
                         <Skeleton className="h-4 w-4/6 mt-1" />
@@ -305,37 +271,43 @@ export default function NewSchemesPage() {
                      </div>
                   </CardContent>
                 </Card>
-              )}
+              ))}
 
-              {analysisResult && (
-                <Card>
+              {analysisResult && analysisResult.suggestedSchemes.map((scheme, index) => (
+                <Card key={index}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                         <Sparkles className="h-6 w-6 text-primary" />
-                        {analysisResult.schemeName}
+                        {scheme.schemeName}
                     </CardTitle>
-                    <CardDescription>{analysisResult.schemeDescription}</CardDescription>
+                    <CardDescription>{scheme.schemeDescription}</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
+                  <CardContent className="space-y-4">
                     <div>
                       <h3 className="font-semibold flex items-center gap-2 mb-2">
-                        <Target className="h-5 w-5 text-primary" /> Objectives
+                        <Wrench className="h-5 w-5 text-primary" /> Predicted Skill Gaps
                       </h3>
-                      <ul className="list-disc pl-5 space-y-1 text-sm text-foreground">
-                        {analysisResult.objectives.map((obj, index) => (
-                          <li key={index}>{obj}</li>
+                      <div className="flex flex-wrap gap-1">
+                        {scheme.predictedSkillGaps.map((skill, skillIndex) => (
+                          <span key={skillIndex} className="text-xs bg-secondary text-secondary-foreground px-2 py-1 rounded-full">{skill}</span>
                         ))}
-                      </ul>
+                      </div>
+                    </div>
+                     <div>
+                      <h3 className="font-semibold flex items-center gap-2 mb-2">
+                        <Target className="h-5 w-5 text-primary" /> Upskilling Strategy
+                      </h3>
+                      <p className="text-sm text-foreground">{scheme.upskillingStrategy}</p>
                     </div>
                     <div>
                       <h3 className="font-semibold flex items-center gap-2 mb-2">
                         <Users className="h-5 w-5 text-primary" /> Target Beneficiaries
                       </h3>
-                      <p className="text-sm text-foreground">{analysisResult.targetBeneficiaries}</p>
+                      <p className="text-sm text-foreground">{scheme.targetBeneficiaries}</p>
                     </div>
                   </CardContent>
                 </Card>
-              )}
+              ))}
             </div>
           </main>
         </SidebarInset>
