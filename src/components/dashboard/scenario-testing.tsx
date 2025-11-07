@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -35,9 +36,9 @@ export default function ScenarioTesting() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      factoryLocation: 'Austin, Texas',
-      laborTypesRequired: 'Semiconductor technicians, manufacturing engineers',
-      additionalContext: '',
+      factoryLocation: 'Pune, Maharashtra',
+      laborTypesRequired: 'Automobile engineers, supply chain specialists',
+      additionalContext: 'New EV manufacturing plant being set up.',
     },
   });
 
@@ -65,7 +66,7 @@ export default function ScenarioTesting() {
               <FormItem>
                 <FormLabel>New Development Location</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Austin, Texas" {...field} />
+                  <Input placeholder="e.g., Pune, Maharashtra" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -78,7 +79,7 @@ export default function ScenarioTesting() {
               <FormItem>
                 <FormLabel>Labor Types Required</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Semiconductor technicians" {...field} />
+                  <Input placeholder="e.g., Automobile engineers" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

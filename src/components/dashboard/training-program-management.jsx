@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -19,11 +20,11 @@ import { Progress } from '@/components/ui/progress';
 import { MoreHorizontal } from 'lucide-react';
 
 const mockPrograms = [
-  { id: 'TP001', name: 'Advanced Cloud Computing', region: 'North District', alignmentScore: 85, status: 'Aligned' },
-  { id: 'TP002', name: 'AI & Machine Learning Basics', region: 'South District', alignmentScore: 65, status: 'Needs Review' },
-  { id: 'TP003', name: 'Cybersecurity Fundamentals', region: 'East District', alignmentScore: 92, status: 'Aligned' },
-  { id: 'TP004', name: 'Data Analytics with Python', region: 'West District', alignmentScore: 78, status: 'Aligned' },
-  { id: 'TP005', name: 'Green Energy Technician', region: 'South District', alignmentScore: 45, status: 'Pending' },
+  { id: 'TP001', name: 'Advanced Cloud Computing', region: 'North India', alignmentScore: 85, status: 'Aligned' },
+  { id: 'TP002', name: 'AI & Machine Learning Basics', region: 'South India', alignmentScore: 65, status: 'Needs Review' },
+  { id: 'TP003', name: 'Cybersecurity Fundamentals', region: 'East India', alignmentScore: 92, status: 'Aligned' },
+  { id: 'TP004', name: 'Data Analytics with Python', region: 'West India', alignmentScore: 78, status: 'Aligned' },
+  { id: 'TP005', name: 'Green Energy Technician', region: 'South India', alignmentScore: 45, status: 'Pending' },
 ];
 
 export default function TrainingProgramManagement() {

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -42,8 +43,8 @@ export default function AutomationRiskAlert() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      economicSector: 'Manufacturing',
-      regionalFactors: 'High labor costs',
+      economicSector: 'IT Services',
+      regionalFactors: 'Bangalore-Hyderabad corridor',
       timeHorizon: 'Long-term',
     },
   });
@@ -72,7 +73,7 @@ export default function AutomationRiskAlert() {
               <FormItem>
                 <FormLabel>Economic Sector</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Manufacturing" {...field} />
+                  <Input placeholder="e.g., IT Services" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -110,7 +111,7 @@ export default function AutomationRiskAlert() {
               <FormItem>
                 <FormLabel>Regional Factors</FormLabel>
                 <FormControl>
-                  <Input placeholder="Optional: e.g., high labor costs" {...field} />
+                  <Input placeholder="Optional: e.g., Bangalore-Hyderabad corridor" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

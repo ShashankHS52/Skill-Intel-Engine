@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -43,7 +44,7 @@ export default function SkillGapAnalyzer() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       sector: 'Technology',
-      region: 'California',
+      region: 'Maharashtra',
       proficiencyLevel: 'Mid-level',
       specificConsiderations: '',
     },
@@ -86,7 +87,7 @@ export default function SkillGapAnalyzer() {
               <FormItem>
                 <FormLabel>Region</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., California" {...field} />
+                  <Input placeholder="e.g., Maharashtra" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

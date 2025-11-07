@@ -1,3 +1,4 @@
+
 import {
   BookCheck,
   LayoutDashboard,
@@ -150,28 +151,28 @@ export default function Dashboard() {
           <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
               <KpiCard
-                title="Male Count"
+                title="Male Count (India)"
                 value="7.2M"
                 change="+5.5%"
                 icon={<User className="h-5 w-5 text-muted-foreground" />}
                 description="from last month"
               />
               <KpiCard
-                title="Female Count"
+                title="Female Count (India)"
                 value="6.1M"
                 change="+15.2%"
                 icon={<User className="h-5 w-5 text-muted-foreground" />}
                 description="from last month"
               />
               <KpiCard
-                title="Total Employment"
+                title="Total Employment (India)"
                 value="85%"
                 change="+2.8%"
                 icon={<Briefcase className="h-5 w-5 text-muted-foreground" />}
                 description="from last month"
               />
               <KpiCard
-                title="Unemployment Ratio"
+                title="Unemployment Ratio (India)"
                 value="7.6%"
                 change="-0.5%"
                 icon={<PieChart className="h-5 w-5 text-muted-foreground" />}
