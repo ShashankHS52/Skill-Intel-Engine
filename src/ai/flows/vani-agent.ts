@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview The "Vani AI" voice assistant agent for citizen users.
@@ -49,10 +50,13 @@ async function toWav(
 
 // --- Genkit Flow Definition ---
 
-const prompt = ai.definePrompt({
-  name: 'vaniAgentPrompt',
+// Define a schema for the text-only part of the response
+const VaniTextOutputSchema = VaniAgentOutputSchema.omit({ audioDataUri: true });
+
+const vaniTextResponsePrompt = ai.definePrompt({
+  name: 'vaniTextResponsePrompt',
   input: { schema: VaniAgentInputSchema },
-  output: { schema: VaniAgentOutputSchema },
+  output: { schema: VaniTextOutputSchema },
   prompt: `You are Vani, a friendly and patient AI voice assistant for the Skill Intel Engine. Your purpose is to help Indian citizens, especially those with low digital literacy, build their skill profile using their voice.
 
   - Language: Always respond in the language specified (e.g., '{{language}}').
@@ -81,9 +85,9 @@ const vaniAgentFlow = ai.defineFlow(
   },
   async (input) => {
     // 1. Get the text response from the main LLM.
-    const { output: agentResponse } = await prompt(input);
+    const { output: agentResponse } = await vaniTextResponsePrompt(input);
     if (!agentResponse) {
-      throw new Error('Vani agent failed to generate a response.');
+      throw new Error('Vani agent failed to generate a text response.');
     }
 
     // 2. Synthesize the text response into audio.
@@ -107,7 +111,7 @@ const vaniAgentFlow = ai.defineFlow(
     const pcmData = Buffer.from(audioMedia.url.substring(audioMedia.url.indexOf(',') + 1), 'base64');
     const wavBase64 = await toWav(pcmData);
 
-    // 3. Return the combined output.
+    // 3. Return the combined output, which now matches the full VaniAgentOutputSchema.
     return {
       ...agentResponse,
       audioDataUri: `data:audio/wav;base64,${wavBase64}`,
