@@ -150,7 +150,7 @@ export default function VaniAiWidget() {
                     {msg.sender === 'user' && <User className="h-5 w-5 text-muted-foreground flex-shrink-0" />}
                 </div>
             ))}
-             {isLoading && (
+             {isLoading && messages.length > 0 && (
                 <div className="flex items-center gap-2 justify-start">
                     <Bot className="h-5 w-5 text-primary flex-shrink-0" />
                     <div className="p-2 rounded-lg bg-muted rounded-bl-none">

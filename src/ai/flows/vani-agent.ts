@@ -64,7 +64,7 @@ const vaniTextResponsePrompt = ai.definePrompt({
   - Context: You will be given the current conversation state. Use it to guide the conversation.
   - Task: Your main goal is to extract skills from the user's description of their work.
 
-  Current State: {{jsonStringify conversationState}}
+  Current State: {{conversationState}}
   User's input: "{{textQuery}}"
 
   Based on the user's input:
