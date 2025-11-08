@@ -66,7 +66,7 @@ const vaniTextResponsePrompt = ai.definePrompt({
 
   Conversation State (JSON):
   {{#if conversationState}}
-  {{{JSON.stringify conversationState}}}
+  {{conversationState}}
   {{else}}
   {}
   {{/if}}
@@ -92,24 +92,27 @@ const vaniAgentFlow = ai.defineFlow(
   },
   async (input) => {
     // 1. Get the text response from the main LLM.
-    const { output: agentResponse } = await vaniTextResponsePrompt(input);
+    const { output: agentResponse } = await vaniTextResponsePrompt({
+        ...input,
+        conversationState: JSON.stringify(input.conversationState || {}),
+    });
     if (!agentResponse) {
       throw new Error('Vani agent failed to generate a text response.');
     }
 
     // 2. Synthesize the text response into audio.
     const { media: audioMedia } = await ai.generate({
-        model: 'googleai/gemini-2.5-flash-preview-tts',
-        config: {
+      model: 'googleai/gemini-2.5-flash-preview-tts',
+      config: {
           responseModalities: ['AUDIO'],
           speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'en-US-Wavenet-F' }, // Using a compatible female voice
-            },
+              voiceConfig: {
+                  prebuiltVoiceConfig: { voiceName: 'en-US-Wavenet-F' }, // Changed to a higher quality female voice
+              },
           },
-        },
-        prompt: agentResponse.responseText,
-    });
+      },
+      prompt: agentResponse.responseText,
+  });
       
     if (!audioMedia?.url) {
         throw new Error('TTS model failed to return audio.');
