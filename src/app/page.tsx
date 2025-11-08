@@ -8,7 +8,7 @@ import Image from 'next/image';
 
 function AppFooter() {
     return (
-      <footer className="w-full border-t mt-auto">
+      <footer className="w-full border-t  mt-auto">
         <div className="container mx-auto py-4 text-center text-sm text-muted-foreground">
           © {new Date().getFullYear()} Skill Intel Engine. All rights reserved.
         </div>
@@ -19,18 +19,10 @@ function AppFooter() {
 export default function CitizenHomePage() {
   return (
     <>
-      <header className="bg-primary text-primary-foreground pt-8 px-4 pb-4 mb-8">
-        <div className="container mx-auto flex items-center justify-start h-full">
-          <div className="flex items-center gap-2">
-            <div>
-              <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={58} height={58} />
-            </div>
-            <h1 className="text-xl font-semibold">Skill Intel Engine</h1>
-          </div>
-        </div>
-      </header>
+<header className="bg-primary text-primary-foreground pt-2 px-2 pb-2 mb-2"> <div className="container mx-auto flex items-center justify-start h-full"> <div className="flex items-center gap-2"> <div> <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={58} height={58} /> </div> <h1 className="text-xl font-semibold">Skill Intel Engine</h1> </div> </div> </header>
 
-      <div className="container mx-auto">
+
+      <div className="container pt-8 mx-auto">
         <div className="flex flex-col items-center justify-center text-center space-y-8">
           <section className="w-full max-w-4xl">
             <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-primary">
