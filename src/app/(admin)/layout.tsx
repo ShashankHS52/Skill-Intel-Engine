@@ -1,34 +1,25 @@
-
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
 import {
-  ArrowLeft,
-  Briefcase,
-  ChevronDown,
-  FileText,
-  FolderKanban,
+  BookCheck,
   LayoutDashboard,
+  ChevronDown,
+  Briefcase,
+  FileText,
   Lightbulb,
   Search,
   Settings,
-  BookCheck,
-  Loader2,
-  MapPin,
+  Target,
   Users,
-  CircleDollarSign,
+  PieChart,
+  User,
+  FolderKanban,
   TrendingUp,
   AlertTriangle,
 } from 'lucide-react';
+
+import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,53 +30,28 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import {
+  SidebarProvider,
   Sidebar,
-  SidebarContent,
-  SidebarFooter,
   SidebarHeader,
-  SidebarInset,
+  SidebarContent,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
+  SidebarFooter,
+  SidebarTrigger,
+  SidebarInset,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarProvider,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { analyzeProject } from '@/app/actions/project-analyzer';
-import { ProjectAnalyzerOutput } from '@/ai/flows/project-analyzer';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {PlaceHolderImages} from '@/lib/placeholder-images';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
-
-export const upcomingProjects = [
-  {
-    id: 'proj-001',
-    name: 'National Digital Health Mission',
-    description: 'To develop the backbone necessary to support the integrated digital health infrastructure of the country.',
-    agency: 'Ministry of Health and Family Welfare',
-  },
-  {
-    id: 'proj-002',
-    name: 'Smart Cities Mission 2.0',
-    description: 'Expansion of the Smart Cities Mission to cover 100 new cities, focusing on sustainable and inclusive development.',
-    agency: 'Ministry of Housing and Urban Affairs',
-  },
-  {
-    id: 'proj-003',
-    name: 'Gaganyaan Programme',
-    description: 'An Indian crewed orbital spacecraft mission to demonstrate indigenous capability to undertake human space flight.',
-    agency: 'Indian Space Research Organisation (ISRO)',
-  },
-  {
-    id: 'proj-004',
-    name: 'National River Linking Project',
-    description: 'A large-scale engineering project to link Indian rivers by a network of reservoirs and canals to reduce floods and water shortage.',
-    agency: 'Ministry of Jal Shakti',
-  },
-];
 
 function AppSidebar() {
   return (
@@ -115,7 +81,7 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="/">
+            <Link href="/dashboard">
               <SidebarMenuButton tooltip="Dashboard">
                 <LayoutDashboard />
                 Dashboard
@@ -125,7 +91,7 @@ function AppSidebar() {
           <Collapsible>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Projects" className="justify-between" isActive>
+                <SidebarMenuButton tooltip="Projects" className="justify-between">
                   <div className="flex items-center gap-2">
                     <FolderKanban />
                     Projects
@@ -138,7 +104,7 @@ function AppSidebar() {
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
                   <Link href="/projects/new">
-                    <SidebarMenuSubButton isActive>
+                    <SidebarMenuSubButton>
                       <Briefcase className="mr-2" />
                       New Projects
                     </SidebarMenuSubButton>
@@ -163,7 +129,7 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-           <Collapsible>
+          <Collapsible>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip="Awareness" className="justify-between">
@@ -248,107 +214,21 @@ function AppHeader() {
   );
 }
 
-export default function NewProjectsPage() {
-  const [analysisResult, setAnalysisResult] = useState<ProjectAnalyzerOutput | null>(null);
-  const [loadingProjectId, setLoadingProjectId] = useState<string | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const handleAnalyzeClick = async (project: { name: string; description: string; id: string }) => {
-    setLoadingProjectId(project.id);
-    setAnalysisResult(null);
-    try {
-      const result = await analyzeProject({
-        projectName: project.name,
-        projectDescription: project.description,
-      });
-      setAnalysisResult(result);
-      setIsDialogOpen(true);
-    } catch (error) {
-      console.error("Error analyzing project:", error);
-    } finally {
-      setLoadingProjectId(null);
-    }
-  };
-
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <SidebarProvider defaultOpen={false}>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <SidebarInset>
           <AppHeader />
-          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="outline" size="icon" className="h-7 w-7">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="sr-only">Back</span>
-                </Button>
-              </Link>
-              <h1 className="font-semibold text-xl md:text-2xl">Upcoming Government Projects</h1>
-            </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {upcomingProjects.map(project => (
-                <Card key={project.id}>
-                  <CardHeader>
-                    <CardTitle>{project.name}</CardTitle>
-                    <CardDescription>{project.agency}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground line-clamp-3">{project.description}</p>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      className="w-full"
-                      onClick={() => handleAnalyzeClick(project)}
-                      disabled={loadingProjectId === project.id}
-                    >
-                      {loadingProjectId === project.id && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                      {loadingProjectId === project.id ? 'Analyzing...' : 'Use AI to Analyze'}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
+          <main className="flex flex-1 flex-col gap-6 p-4 lg:gap-8 lg:p-6">
+            {children}
           </main>
         </SidebarInset>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Project Analysis</DialogTitle>
-            </DialogHeader>
-            {analysisResult && (
-              <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <MapPin className="h-5 w-5 text-primary" /> Best Region
-                  </h3>
-                  <p className="text-sm text-foreground mt-2 pl-7">{analysisResult.bestRegion}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <Users className="h-5 w-5 text-primary" /> Qualified Employees
-                  </h3>
-                  <ul className="list-disc pl-12 mt-2 space-y-1 text-sm text-foreground">
-                    {analysisResult.qualifiedEmployees.map((skill, index) => (
-                      <li key={index}>{skill}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <CircleDollarSign className="h-5 w-5 text-primary" /> Cost Effectiveness
-                  </h3>
-                  <p className="text-sm text-foreground mt-2 pl-7">{analysisResult.costEffectiveness}</p>
-                </div>
-              </div>
-            )}
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button>Close</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </SidebarProvider>
   );
