@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Loader2, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -89,93 +89,135 @@ export default function IdentityVerificationPage() {
   };
 
   return (
-    <div className="flex justify-center items-center py-8">
-      <Card className="w-full max-w-md">
-        <CardHeader className="items-center text-center">
-          <Image src="/aadhaar-logo.svg" alt="Aadhaar Logo" width={120} height={40} />
-          <CardTitle>Start Your Skill Profile</CardTitle>
-          <CardDescription>
-            Let's begin by verifying your identity with Aadhaar for a fast and secure setup.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {step === 'aadhaar' && (
-            <form onSubmit={handleAadhaarSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="aadhaar">Aadhaar Number</Label>
-                <Input
-                  id="aadhaar"
-                  type="text"
-                  placeholder="Enter 12-digit Aadhaar"
-                  value={aadhaar}
-                  onChange={(e) => setAadhaar(e.target.value.replace(/\D/g, ''))}
-                  maxLength={12}
-                  required
-                />
-              </div>
+    <div className="w-full min-h-[calc(100vh-200px)] flex items-center justify-center">
+        <div className="relative w-full h-full rounded-lg grid lg:grid-cols-2">
+            {/* Left Panel */}
+            <div className="relative hidden lg:flex flex-col justify-between p-12 text-white bg-primary rounded-l-lg">
+                 <div className="absolute inset-0 bg-gradient-to-br from-primary to-teal-700 opacity-90 rounded-l-lg"></div>
+                <div 
+                    className="absolute inset-0 bg-cover bg-center rounded-l-lg"
+                    style={{ backgroundImage: "url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=1974&auto=format&fit=crop')", opacity: 0.1 }}
+                ></div>
 
-              <div className="space-y-2">
-                <Label htmlFor="captcha">Enter CAPTCHA</Label>
-                <div className="flex items-center gap-4">
-                    <div className="flex-1">
-                         <Input
-                            id="captcha"
-                            type="text"
-                            placeholder="Enter the text"
-                            value={captcha}
-                            onChange={(e) => setCaptcha(e.target.value)}
-                            required
-                        />
+                <div className="relative z-10">
+                    <div className="flex items-center gap-3 text-2xl font-bold">
+                        <svg width="48" height="48" viewBox="0 0 1024 1024" className="text-white" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M704 192h160v736H160V192h160v64h384v-64zM288 448h128v64H288v-64zm0 192h128v64H288v-64zm0 192h128v64H288v-64zm320-384h128v64H608v-64zm0 192h128v64H608v-64zm0 192h128v64H608v-64zM448 96A128 128 0 1 1 448 352A128 128 0 0 1 448 96zm0 64a64 64 0 1 0 0 128 64 64 0 0 0 0-128z"/>
+                        </svg>
+                        Skill Intel Engine
                     </div>
-                    <div className="bg-muted px-4 py-2 rounded-md select-none">
-                        <span className="text-lg font-bold tracking-widest" style={{fontFamily: 'monospace', textDecoration: 'line-through'}}>{generatedCaptcha}</span>
+                    <p className="mt-4 text-base opacity-90">
+                        Join millions of Indians in building a stronger, more skilled nation. Your profile helps us create better policies for a brighter future.
+                    </p>
+                </div>
+                <div className="relative z-10 space-y-4">
+                    <div className="flex items-center gap-3">
+                        <CheckCircle className="h-5 w-5 text-green-300" />
+                        <span>Secure and Confidential</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <CheckCircle className="h-5 w-5 text-green-300" />
+                        <span>Personalized Career Insights</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <CheckCircle className="h-5 w-5 text-green-300" />
+                        <span>Contribute to National Growth</span>
                     </div>
                 </div>
-              </div>
+            </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Send OTP'}
-              </Button>
-            </form>
-          )}
+            {/* Right Panel */}
+            <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-card rounded-r-lg">
+                <Card className="w-full max-w-md border-0 shadow-none bg-transparent">
+                    <CardHeader className="items-center text-center">
+                    <Image src="/Aadhar-logo.svg" alt="Aadhaar Logo" width={120} height={40} />
+                    <CardTitle>Start Your Skill Profile</CardTitle>
+                    <CardDescription>
+                        Let's begin by verifying your identity with Aadhaar for a fast and secure setup.
+                    </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                    {step === 'aadhaar' && (
+                        <form onSubmit={handleAadhaarSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="aadhaar">Aadhaar Number</Label>
+                            <Input
+                            id="aadhaar"
+                            type="text"
+                            placeholder="Enter 12-digit Aadhaar"
+                            value={aadhaar}
+                            onChange={(e) => setAadhaar(e.target.value.replace(/\D/g, ''))}
+                            maxLength={12}
+                            required
+                            />
+                        </div>
 
-          {step === 'otp' && (
-            <form onSubmit={handleOtpSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="otp">Enter OTP</Label>
-                <Input
-                  id="otp"
-                  type="text"
-                  placeholder="Enter 6-digit OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                  maxLength={6}
-                  required
-                />
-                <p className="text-sm text-muted-foreground text-center pt-2">
-                  An OTP has been sent to the mobile number linked with your Aadhaar.
-                </p>
-              </div>
-              <Button type="submit" className="w-full" disabled={loading && resendTimer > 0}>
-                {loading && resendTimer > 0 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Verify & Proceed'}
-              </Button>
-              <div className="flex justify-center items-center gap-2 text-sm">
-                <Button variant="link" onClick={handleResendOtp} disabled={resendTimer > 0 || loading}>
-                  Resend OTP
-                </Button>
-                {resendTimer > 0 && <span className="text-muted-foreground">in {resendTimer}s</span>}
-              </div>
-              <Button variant="link" className="w-full" onClick={() => {
-                  setStep('aadhaar');
-                  setGeneratedCaptcha(generateCaptcha());
-                  setCaptcha('');
-              }}>
-                Change Aadhaar Number
-              </Button>
-            </form>
-          )}
-        </CardContent>
-      </Card>
+                        <div className="space-y-2">
+                            <Label htmlFor="captcha">Enter CAPTCHA</Label>
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                    <Input
+                                        id="captcha"
+                                        type="text"
+                                        placeholder="Enter the text"
+                                        value={captcha}
+                                        onChange={(e) => setCaptcha(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="bg-muted px-4 py-2 rounded-md select-none">
+                                    <span className="text-lg font-bold tracking-widest" style={{fontFamily: 'monospace', textDecoration: 'line-through'}}>{generatedCaptcha}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Send OTP'}
+                        </Button>
+                        </form>
+                    )}
+
+                    {step === 'otp' && (
+                        <form onSubmit={handleOtpSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="otp">Enter OTP</Label>
+                            <Input
+                            id="otp"
+                            type="text"
+                            placeholder="Enter 6-digit OTP"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                            maxLength={6}
+                            required
+                            />
+                            <p className="text-sm text-muted-foreground text-center pt-2">
+                            An OTP has been sent to the mobile number linked with your Aadhaar.
+                            </p>
+                        </div>
+                        <Button type="submit" className="w-full" disabled={loading && resendTimer > 0}>
+                            {loading && resendTimer > 0 ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Verify & Proceed'}
+                        </Button>
+                        <div className="flex justify-center items-center gap-2 text-sm">
+                            <Button variant="link" onClick={handleResendOtp} disabled={resendTimer > 0 || loading}>
+                            Resend OTP
+                            </Button>
+                            {resendTimer > 0 && <span className="text-muted-foreground">in {resendTimer}s</span>}
+                        </div>
+                        <Button variant="link" className="w-full" onClick={() => {
+                            setStep('aadhaar');
+                            setGeneratedCaptcha(generateCaptcha());
+                            setCaptcha('');
+                        }}>
+                            Change Aadhaar Number
+                        </Button>
+                        </form>
+                    )}
+                    </CardContent>
+                </Card>
+            </div>
+        </div>
     </div>
   );
 }
+
+    
