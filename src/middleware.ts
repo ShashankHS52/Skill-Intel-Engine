@@ -15,9 +15,9 @@ export function middleware(request: NextRequest) {
   }
 
   // Redirect from / to /register/identity for citizen flow
-  if (path === '/') {
-    return NextResponse.redirect(new URL('/register/identity', request.url));
-  }
+  // if (path === '/') {
+  //   return NextResponse.redirect(new URL('/register/identity', request.url));
+  // }
   
   // All other requests pass through
   return NextResponse.next();
