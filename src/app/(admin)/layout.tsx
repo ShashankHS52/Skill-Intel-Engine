@@ -18,6 +18,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -43,6 +44,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
@@ -54,10 +56,33 @@ import {PlaceHolderImages} from '@/lib/placeholder-images';
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
 function AppSidebar() {
+  const { open, setOpen } = useSidebar();
+  const [projectsOpen, setProjectsOpen] = useState(false);
+  const [awarenessOpen, setAwarenessOpen] = useState(false);
+
+  const handleProjectsClick = () => {
+    if (!open) {
+      setOpen(true);
+      // Small delay to ensure sidebar opens before expanding
+      setTimeout(() => setProjectsOpen(true), 100);
+    } else {
+      setProjectsOpen(!projectsOpen);
+    }
+  };
+
+  const handleAwarenessClick = () => {
+    if (!open) {
+      setOpen(true);
+      // Small delay to ensure sidebar opens before expanding
+      setTimeout(() => setAwarenessOpen(true), 100);
+    } else {
+      setAwarenessOpen(!awarenessOpen);
+    }
+  };
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
           <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
             <svg
               width="24"
@@ -73,7 +98,7 @@ function AppSidebar() {
               />
             </svg>
           </div>
-          <h1 className="text-xl font-semibold text-sidebar-foreground">
+          <h1 className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
             Skill Intel
           </h1>
         </div>
@@ -88,10 +113,14 @@ function AppSidebar() {
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
-          <Collapsible>
+          <Collapsible open={projectsOpen} onOpenChange={setProjectsOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Projects" className="justify-between">
+                <SidebarMenuButton 
+                  tooltip="Projects" 
+                  className="justify-between"
+                  onClick={handleProjectsClick}
+                >
                   <div className="flex items-center gap-2">
                     <FolderKanban />
                     Projects
@@ -129,10 +158,14 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-          <Collapsible>
+          <Collapsible open={awarenessOpen} onOpenChange={setAwarenessOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Awareness" className="justify-between">
+                <SidebarMenuButton 
+                  tooltip="Awareness" 
+                  className="justify-between"
+                  onClick={handleAwarenessClick}
+                >
                   <div className="flex items-center gap-2">
                     <TrendingUp />
                     Awareness

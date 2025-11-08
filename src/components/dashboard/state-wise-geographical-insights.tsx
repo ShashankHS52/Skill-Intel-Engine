@@ -66,7 +66,7 @@ function InteractiveIndiaMap({
                 }}
               />
               {/* State name label for major states */}
-              {location.name && ['Maharashtra', 'Uttar Pradesh', 'Karnataka', 'Gujarat', 'Tamil Nadu', 'Rajasthan'].includes(location.name) && (
+              {location.name && ['Mandya', 'Uttar Pradesh', 'Karnataka', 'Gujarat', 'Tamil Nadu', 'Rajasthan'].includes(location.name) && (
                 <text
                   x={location.x || 0}
                   y={location.y || 0}
