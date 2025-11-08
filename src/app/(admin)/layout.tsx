@@ -54,6 +54,7 @@ import {
 } from '@/components/ui/collapsible';
 import {PlaceHolderImages} from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
+import React from 'react';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
@@ -63,6 +64,10 @@ function AppSidebar() {
   
   const isProjectRoute = pathname.startsWith('/projects');
   const isAwarenessRoute = pathname.startsWith('/awareness');
+
+  const [isProjectsOpen, setIsProjectsOpen] = React.useState(isProjectRoute);
+  const [isAwarenessOpen, setIsAwarenessOpen] = React.useState(isAwarenessRoute);
+
 
   return (
     <Sidebar collapsible="icon" onOpenChange={setOpen} open={open}>
@@ -90,7 +95,7 @@ function AppSidebar() {
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
-          <Collapsible open={isProjectRoute} onOpenChange={(isOpen) => isProjectRoute || setOpen(isOpen)}>
+          <Collapsible open={isProjectsOpen} onOpenChange={setIsProjectsOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip="Projects" className="justify-between" isActive={isProjectRoute}>
@@ -131,7 +136,7 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-          <Collapsible open={isAwarenessRoute} onOpenChange={(isOpen) => isAwarenessRoute || setOpen(isOpen)}>
+          <Collapsible open={isAwarenessOpen} onOpenChange={setIsAwarenessOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip="Awareness" className="justify-between" isActive={isAwarenessRoute}>
