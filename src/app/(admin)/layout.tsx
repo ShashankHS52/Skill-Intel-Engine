@@ -199,10 +199,12 @@ function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Settings">
-              <Settings />
-              Settings
-            </SidebarMenuButton>
+            <Link href="/settings">
+              <SidebarMenuButton tooltip="Settings" isActive={pathname === '/settings'}>
+                <Settings />
+                Settings
+              </SidebarMenuButton>
+            </Link>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

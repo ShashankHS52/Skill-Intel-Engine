@@ -82,3 +82,40 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom Scrollbar Styles */
+@layer utilities {
+  /* Hide scrollbar by default, show on hover */
+  .scrollbar-hover-visible::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .scrollbar-hover-visible::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-hover-visible::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 9999px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .scrollbar-hover-visible:hover::-webkit-scrollbar-thumb {
+    background-color: #d1d5db; /* Light grey */
+  }
+  
+  .scrollbar-hover-visible::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af; /* Slightly darker grey on hover */
+  }
+
+  /* For Firefox */
+  .scrollbar-hover-visible {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  
+  .scrollbar-hover-visible:hover {
+    scrollbar-color: #d1d5db transparent;
+  }
+}

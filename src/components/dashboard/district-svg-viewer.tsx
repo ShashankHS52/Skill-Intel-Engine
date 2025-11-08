@@ -94,7 +94,7 @@ export default function DistrictSVGViewer() {
         {currentDistrict && currentSVG ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* District Map Display - LEFT SIDE */}
-            <div className="bg-gradient-to-b from-blue-50 to-green-50 rounded-lg p-6 flex items-center justify-center min-h-[600px] border-2 border-primary/20">
+            <div className="bg-gradient-to-b from-blue-50 to-green-50 rounded-lg p-6 flex items-center justify-center h-[600px] border-2 border-primary/20">
               <div className="relative w-full h-full flex items-center justify-center">
                 <img
                   src={`/karnataka-districts/${currentSVG}`}
@@ -120,65 +120,65 @@ export default function DistrictSVGViewer() {
             </div>
 
             {/* District Information - RIGHT SIDE */}
-            <div className="bg-primary/5 border rounded-lg p-6 overflow-y-auto max-h-[600px]">
-              <h3 className="font-bold text-xl mb-4" style={{ color: '#008080' }}>
+            <div className="bg-primary/5 border rounded-lg p-4 lg:p-6 overflow-y-auto h-[600px] scrollbar-hover-visible">
+              <h3 className="font-bold text-lg lg:text-xl mb-4 break-words" style={{ color: '#008080' }}>
                 {currentDistrict.name} District - Key Metrics
               </h3>
               
               {/* Key Statistics Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-white p-4 rounded-lg shadow-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 lg:gap-4 mb-6">
+                <div className="bg-white p-3 lg:p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <Users className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">Working Population</span>
+                    <Users className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground break-words">Working Population</span>
                   </div>
-                  <div className="text-2xl font-bold" style={{ color: '#008080' }}>
+                  <div className="text-xl lg:text-2xl font-bold break-words" style={{ color: '#008080' }}>
                     {currentDistrict.workingPopulation}K
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm">
+                <div className="bg-white p-3 lg:p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <Briefcase className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">Employment Rate</span>
+                    <Briefcase className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground break-words">Employment Rate</span>
                   </div>
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-xl lg:text-2xl font-bold text-green-600 break-words">
                     {currentDistrict.employmentRate}%
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm">
+                <div className="bg-white p-3 lg:p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">Digital Skills</span>
+                    <TrendingUp className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground break-words">Digital Skills</span>
                   </div>
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-xl lg:text-2xl font-bold text-blue-600 break-words">
                     {currentDistrict.digitalSkills}%
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg shadow-sm">
+                <div className="bg-white p-3 lg:p-4 rounded-lg shadow-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <Award className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">Certified Workforce</span>
+                    <Award className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground break-words">Certified Workforce</span>
                   </div>
-                  <div className="text-2xl font-bold text-purple-600">
+                  <div className="text-xl lg:text-2xl font-bold text-purple-600 break-words">
                     {currentDistrict.certifiedWorkforce}%
                   </div>
                 </div>
               </div>
 
               {/* Additional Metrics */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-white p-4 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-muted-foreground">Unemployment Rate</span>
+              <div className="grid grid-cols-1 gap-3 lg:gap-4 mb-6">
+                <div className="bg-white p-3 lg:p-4 rounded-lg">
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
+                    <span className="text-sm text-muted-foreground break-words">Unemployment Rate</span>
                     <Badge variant={currentDistrict.unemployment < 4 ? 'default' : currentDistrict.unemployment < 6 ? 'secondary' : 'destructive'}>
                       {currentDistrict.unemployment}%
                     </Badge>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-muted-foreground">Skill Gap Level</span>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                    <span className="text-sm text-muted-foreground break-words">Skill Gap Level</span>
                     <Badge 
                       variant={currentDistrict.skillGap === 'low' ? 'default' : 
                               currentDistrict.skillGap === 'medium' ? 'secondary' : 'destructive'}
@@ -188,8 +188,8 @@ export default function DistrictSVGViewer() {
                   </div>
                 </div>
 
-                <div className="bg-white p-4 rounded-lg">
-                  <div className="text-sm text-muted-foreground mb-2">Skill Density Score</div>
+                <div className="bg-white p-3 lg:p-4 rounded-lg">
+                  <div className="text-sm text-muted-foreground mb-2 break-words">Skill Density Score</div>
                   <div className="flex items-center gap-2">
                     <div className="flex-1 bg-gray-200 rounded-full h-2">
                       <div 
@@ -197,7 +197,7 @@ export default function DistrictSVGViewer() {
                         style={{ width: `${(currentDistrict.skillDensity / 5) * 100}%` }}
                       />
                     </div>
-                    <span className="font-bold text-teal-600">
+                    <span className="font-bold text-teal-600 flex-shrink-0">
                       {currentDistrict.skillDensity}/5
                     </span>
                   </div>
@@ -206,10 +206,10 @@ export default function DistrictSVGViewer() {
 
               {/* Major Sectors */}
               <div className="mb-4">
-                <h4 className="font-medium mb-2 text-sm text-muted-foreground">Major Economic Sectors</h4>
+                <h4 className="font-medium mb-2 text-sm text-muted-foreground break-words">Major Economic Sectors</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentDistrict.majorSectors.map((sector, index) => (
-                    <Badge key={index} variant="outline" className="text-sm">
+                    <Badge key={index} variant="outline" className="text-xs sm:text-sm break-words">
                       {sector}
                     </Badge>
                   ))}
@@ -218,10 +218,10 @@ export default function DistrictSVGViewer() {
 
               {/* Emerging Skills */}
               <div>
-                <h4 className="font-medium mb-2 text-sm text-muted-foreground">Emerging Skills in Demand</h4>
+                <h4 className="font-medium mb-2 text-sm text-muted-foreground break-words">Emerging Skills in Demand</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentDistrict.emergingSkills.map((skill, index) => (
-                    <Badge key={index} variant="secondary" className="text-sm">
+                    <Badge key={index} variant="secondary" className="text-xs sm:text-sm break-words">
                       {skill}
                     </Badge>
                   ))}
