@@ -24,35 +24,49 @@ export async function vaniAgent(input: VaniAgentInput): Promise<VaniAgentOutput>
   
   // If audio is provided, transcribe it first.
   if (input.audioQuery) {
-    const { text } = await ai.generate({
-      model: 'googleai/gemini-1.5-flash-latest',
-      prompt: [
-        { media: { url: input.audioQuery } },
-        { text: "Transcribe this audio. If it's not in English, provide the English transcription." },
-      ],
-      config: {
-        temperature: 0.1,
-      },
-    });
-    userQuery = text || "I couldn't understand the audio.";
+    try {
+      const { text } = await ai.generate({
+        model: 'googleai/gemini-1.5-flash-latest',
+        prompt: [
+          { media: { url: input.audioQuery } },
+          { text: "Transcribe this audio. If it's not in English, provide the English transcription." },
+        ],
+        config: {
+          temperature: 0.1,
+        },
+      });
+      userQuery = text || "I couldn't understand the audio.";
+    } catch (e) {
+      console.error('Error during transcription:', e);
+      userQuery = "I couldn't understand the audio.";
+    }
   }
 
-  // If the user's query is very short, it might be a simple greeting.
-  if (userQuery.trim().length < 10 && !input.conversationState?.skillsFound) {
+  // If the user's query is very short and no skills have been found yet, it might be a simple greeting.
+  if (userQuery.trim().length < 15 && !input.conversationState?.skillsFound) {
       const greetingResponse = "Hello! I'm Vani. Please tell me about the work you do so I can help build your skill profile.";
-      const { media: audioMedia } = await ai.generate({
-        model: 'googleai/gemini-2.5-flash-preview-tts',
-        config: {
-          responseModalities: ['AUDIO'],
-          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Algenib' } } },
-        },
-        prompt: greetingResponse,
-      });
-      return {
-          responseText: greetingResponse,
-          endConversation: false,
-          audioDataUri: audioMedia?.url,
-      };
+      try {
+          const { media: audioMedia } = await ai.generate({
+            model: 'googleai/gemini-2.5-flash-preview-tts',
+            config: {
+              responseModalities: ['AUDIO'],
+              speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Algenib' } } },
+            },
+            prompt: greetingResponse,
+          });
+          return {
+              responseText: greetingResponse,
+              endConversation: false,
+              audioDataUri: audioMedia?.url,
+          };
+      } catch (e) {
+          console.error('Error during TTS for greeting:', e);
+           // Fallback to text-only if TTS fails
+          return {
+            responseText: greetingResponse,
+            endConversation: false,
+          };
+      }
   }
   
   // Update the input for the main flow with the transcribed text
@@ -100,37 +114,47 @@ const vaniAgentFlow = ai.defineFlow(
   },
   async (input) => {
     // 1. Get the text response from the main LLM.
-    const { output: agentResponse } = await vaniTextResponsePrompt(input);
-    if (!agentResponse) {
-        throw new Error("I'm sorry, I encountered an issue. Could you please try again?");
-    }
-
-    // 2. Synthesize the text response into audio.
-    const { media: audioMedia } = await ai.generate({
-        model: 'googleai/gemini-2.5-flash-preview-tts',
-        config: {
-          responseModalities: ['AUDIO'],
-          speechConfig: {
-            voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Algenib' }, // Default voice
-            },
-          },
-        },
-        prompt: agentResponse.responseText,
-    });
-      
-    if (!audioMedia?.url) {
-        // If TTS fails, still return the text response
-        return {
-            ...agentResponse,
-            responseText: agentResponse.responseText || "I couldn't generate audio, but here's the text response.",
+    let agentResponse: VaniAgentOutput;
+    try {
+        const { output } = await vaniTextResponsePrompt(input);
+        if (!output) {
+            throw new Error("Flow did not produce a text output.");
+        }
+        agentResponse = output;
+    } catch (e) {
+        console.error('Error generating text response:', e);
+        agentResponse = {
+            responseText: "I'm sorry, I'm having trouble connecting. Please try again later.",
+            endConversation: true
         };
+    }
+    
+    // 2. Synthesize the text response into audio.
+    try {
+        const { media: audioMedia } = await ai.generate({
+            model: 'googleai/gemini-2.5-flash-preview-tts',
+            config: {
+              responseModalities: ['AUDIO'],
+              speechConfig: {
+                voiceConfig: {
+                  prebuiltVoiceConfig: { voiceName: 'Algenib' }, // Default voice
+                },
+              },
+            },
+            prompt: agentResponse.responseText,
+        });
+        
+        if (audioMedia?.url) {
+            agentResponse.audioDataUri = audioMedia.url;
+        }
+
+    } catch(e) {
+        console.error('Error generating TTS audio:', e);
+        // If TTS fails, we can still proceed with the text response.
+        // The audioDataUri will just be missing.
     }
 
     // 3. Return the combined output.
-    return {
-      ...agentResponse,
-      audioDataUri: audioMedia.url,
-    };
+    return agentResponse;
   }
 );
