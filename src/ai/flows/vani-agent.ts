@@ -20,8 +20,25 @@ import {
 // --- Main Agent Function ---
 
 export async function vaniAgent(input: VaniAgentInput): Promise<VaniAgentOutput> {
+  let userQuery = input.textQuery;
+  
+  // If audio is provided, transcribe it first.
+  if (input.audioQuery) {
+    const { text } = await ai.generate({
+      model: 'googleai/gemini-1.5-flash-latest',
+      prompt: [
+        { media: { url: input.audioQuery } },
+        { text: "Transcribe this audio. If it's not in English, provide the English transcription." },
+      ],
+      config: {
+        temperature: 0.1,
+      },
+    });
+    userQuery = text || "I couldn't understand the audio.";
+  }
+
   // If the user's query is very short, it might be a simple greeting.
-  if (input.textQuery.trim().length < 10 && !input.conversationState?.skillsFound) {
+  if (userQuery.trim().length < 10 && !input.conversationState?.skillsFound) {
       const greetingResponse = "Hello! I'm Vani. Please tell me about the work you do so I can help build your skill profile.";
       const { media: audioMedia } = await ai.generate({
         model: 'googleai/gemini-2.5-flash-preview-tts',
@@ -37,7 +54,10 @@ export async function vaniAgent(input: VaniAgentInput): Promise<VaniAgentOutput>
           audioDataUri: audioMedia?.url,
       };
   }
-  return vaniAgentFlow(input);
+  
+  // Update the input for the main flow with the transcribed text
+  const flowInput = { ...input, textQuery: userQuery };
+  return vaniAgentFlow(flowInput);
 }
 
 
@@ -48,7 +68,7 @@ const VaniTextOutputSchema = VaniAgentOutputSchema.omit({ audioDataUri: true });
 
 const vaniTextResponsePrompt = ai.definePrompt({
   name: 'vaniTextResponsePrompt',
-  input: { schema: VaniAgentInputSchema },
+  input: { schema: VaniAgentInputSchema.omit({ audioQuery: true }) }, // The prompt doesn't need the audio data
   output: { schema: VaniTextOutputSchema },
   prompt: `You are Vani, a friendly and encouraging AI voice assistant for the Skill Intel Engine in India. Your goal is to help citizens, especially those with low digital literacy, build their skill profile by talking to you.
 
@@ -107,7 +127,7 @@ const vaniAgentFlow = ai.defineFlow(
         };
     }
 
-    // 3. Return the combined output. The media.url is already a data URI in the correct format.
+    // 3. Return the combined output.
     return {
       ...agentResponse,
       audioDataUri: audioMedia.url,

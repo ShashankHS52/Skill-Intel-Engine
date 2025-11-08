@@ -1,85 +1,123 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Mic, MicOff, Send, Loader2, Bot, User, X } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Mic, MicOff, Send, Loader2, Bot, User, X, CornerDownLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { vaniAgent, VaniAgentInput, VaniAgentOutput } from '@/app/actions/vani-agent';
+import { vaniAgent, VaniAgentInput } from '@/app/actions/vani-agent';
+import MicRecorder from 'mic-recorder-to-mp3';
 
 type Message = {
   sender: 'user' | 'bot';
   text: string;
 };
 
-const INITIAL_GREETING = "Hello! I'm Vani, your AI assistant. How can I help you build your skill profile today? You can tell me what kind of work you do.";
+const INITIAL_GREETING = "Hello! I'm Vani, your AI assistant. Tell me about the work you do, or press the microphone to speak.";
 
 export default function VaniAiWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationState, setConversationState] = useState<any>({});
   const [inputText, setInputText] = useState('');
+  
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const recorderRef = useRef<MicRecorder | null>(null);
 
+  const initializeRecorder = useCallback(() => {
+    recorderRef.current = new MicRecorder({ bitRate: 128 });
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      initializeRecorder();
+      if (messages.length === 0) {
+        setMessages([{ sender: 'bot', text: INITIAL_GREETING }]);
+      }
+    }
+  }, [isOpen, messages.length, initializeRecorder]);
+  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    if (isOpen && messages.length === 0) {
-      // Start with a static text greeting to avoid unnecessary API calls on open.
-      setMessages([{ sender: 'bot', text: INITIAL_GREETING }]);
-    }
-  }, [isOpen, messages.length]);
-
+  useEffect(scrollToBottom, [messages]);
+  
   const playAudio = (audioDataUri: string) => {
     if (audioPlayerRef.current) {
-        audioPlayerRef.current.src = audioDataUri;
-        audioPlayerRef.current.play().catch(e => console.error("Audio playback failed:", e));
+      audioPlayerRef.current.src = audioDataUri;
+      audioPlayerRef.current.play().catch(e => console.error("Audio playback failed:", e));
     }
   };
-  
+
+  const processUserMessage = async (text: string, audioDataUri?: string) => {
+    setIsLoading(true);
+    setMessages(prev => [...prev, { sender: 'user', text: text }]);
+    
+    try {
+      const input: VaniAgentInput = { 
+        textQuery: text, 
+        audioQuery: audioDataUri,
+        conversationState,
+        language: 'en-IN'
+      };
+      const result = await vaniAgent(input);
+      
+      setMessages(prev => [...prev, { sender: 'bot', text: result.responseText }]);
+      setConversationState(result.updatedConversationState);
+
+      if (result.audioDataUri) {
+        playAudio(result.audioDataUri);
+      }
+    } catch (error) {
+      console.error("Error processing user message:", error);
+      setMessages(prev => [...prev, { sender: 'bot', text: "I'm sorry, an error occurred. Please try again." }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
-
     const userMessageText = inputText.trim();
-    setMessages(prev => [...prev, { sender: 'user', text: userMessageText }]);
     setInputText('');
-    
     await processUserMessage(userMessageText);
   };
 
-  const processUserMessage = async (text: string) => {
-    setIsLoading(true);
-    try {
-        const input: VaniAgentInput = { 
-            textQuery: text, 
-            conversationState,
-            language: 'en-IN'
+  const toggleRecording = async () => {
+    if (isRecording) {
+      // Stop recording
+      try {
+        if (!recorderRef.current) return;
+        const [buffer, blob] = await recorderRef.current.stop().getMp3();
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = async () => {
+          const base64Audio = reader.result as string;
+          // We can't know the transcription on the client, so send a placeholder.
+          // The server-side flow will handle the actual transcription.
+          await processUserMessage("User provided audio.", base64Audio);
         };
-        const result = await vaniAgent(input);
-        
-        setMessages(prev => [...prev, { sender: 'bot', text: result.responseText }]);
-        setConversationState(result.updatedConversationState);
-
-        if (result.audioDataUri) {
-            playAudio(result.audioDataUri);
-        }
-
-    } catch (error) {
-        console.error("Error processing user message:", error);
-        setMessages(prev => [...prev, { sender: 'bot', text: "I'm sorry, I didn't understand that. Could you please try again?" }]);
-    } finally {
-        setIsLoading(false);
+      } catch (e) {
+        console.error("Error stopping recording:", e);
+      } finally {
+        setIsRecording(false);
+      }
+    } else {
+      // Start recording
+      if (!recorderRef.current) initializeRecorder();
+      try {
+        await recorderRef.current?.start();
+        setIsRecording(true);
+      } catch (e) {
+        console.error("Error starting recording:", e);
+      }
     }
   };
 
@@ -98,7 +136,7 @@ export default function VaniAiWidget() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <Card className="w-80 h-[28rem] flex flex-col shadow-2xl rounded-2xl">
+      <Card className="w-80 h-[32rem] flex flex-col shadow-2xl rounded-2xl">
         <CardHeader className="flex flex-row items-center justify-between p-3 border-b">
           <div className="flex items-center gap-2">
             <div className="bg-primary p-2 rounded-full">
@@ -133,7 +171,7 @@ export default function VaniAiWidget() {
                     {msg.sender === 'user' && <User className="h-5 w-5 text-muted-foreground flex-shrink-0" />}
                 </div>
             ))}
-             {isLoading && messages.length > 0 && (
+             {isLoading && (
                 <div className="flex items-center gap-2 justify-start">
                     <Bot className="h-5 w-5 text-primary flex-shrink-0" />
                     <div className="p-2 rounded-lg bg-muted rounded-bl-none">
@@ -145,15 +183,20 @@ export default function VaniAiWidget() {
         </CardContent>
         <CardFooter className="p-3 border-t">
           <form onSubmit={handleSendMessage} className="w-full flex items-center gap-2">
-            <Input
-                placeholder="Type your message..."
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                disabled={isLoading}
-                autoComplete="off"
-            />
-            <Button type="submit" size="icon" disabled={isLoading || !inputText.trim()}>
-                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            <div className="relative flex-1">
+              <Input
+                  placeholder="Type or press mic..."
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  disabled={isLoading || isRecording}
+                  autoComplete="off"
+              />
+              <Button type="submit" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7" disabled={isLoading || !inputText.trim() || isRecording}>
+                  {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <CornerDownLeft className="h-4 w-4" />}
+              </Button>
+            </div>
+            <Button type="button" size="icon" onClick={toggleRecording} disabled={isLoading} variant={isRecording ? 'destructive' : 'outline'}>
+                {isRecording ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
             </Button>
           </form>
         </CardFooter>

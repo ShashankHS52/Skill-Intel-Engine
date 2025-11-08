@@ -1,7 +1,9 @@
+
 import { z } from 'genkit';
 
 export const VaniAgentInputSchema = z.object({
   textQuery: z.string().describe("The transcribed text from the user's speech."),
+  audioQuery: z.string().optional().describe("A Base64 encoded audio data URI from the user's speech."),
   conversationState: z.any().optional().describe('The current state of the conversation to maintain context.'),
   language: z.string().default('en-IN').describe('The BCP-47 language code for the conversation (e.g., hi-IN, en-IN).'),
 });
