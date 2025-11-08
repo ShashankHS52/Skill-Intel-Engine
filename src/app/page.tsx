@@ -9,7 +9,7 @@ import Image from 'next/image';
 export default function CitizenHomePage() {
   return (
     <>
-      <header className="bg-primary text-primary-foreground p-4 -mx-4 -mt-4 md:-mx-6 md:-mt-6 mb-8">
+      <header className="bg-primary text-primary-foreground p-4 -mt-4 md:-mt-6 mb-8">
         <div className="container mx-auto flex items-center justify-center h-full">
           <div className="flex items-center gap-2">
             <div>
