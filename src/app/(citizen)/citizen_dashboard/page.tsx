@@ -27,6 +27,7 @@ import {
   Star,
   Target,
   TrendingUp,
+  Users,
   Video,
 } from 'lucide-react';
 import {
