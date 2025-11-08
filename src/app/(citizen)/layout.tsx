@@ -41,6 +41,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {PlaceHolderImages} from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
@@ -54,8 +55,8 @@ function AppSidebar() {
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
           <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">
-          <div className="bg-primary-foreground rounded-lg p-1 flex items-center justify-center">
-             <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={58} height={58} />
+          <div className={cn("bg-primary-foreground rounded-lg p-1 flex items-center justify-center transition-all", state === 'expanded' ? 'w-14 h-14' : 'w-10 h-10')}>
+             <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={state === 'expanded' ? 58 : 32} height={state === 'expanded' ? 58 : 32} />
             </div>
             {state === 'expanded' && (
               <h1 className="text-xl font-semibold text-sidebar-foreground">
