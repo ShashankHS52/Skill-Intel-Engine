@@ -42,9 +42,6 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   useSidebar
 } from '@/components/ui/sidebar';
 import {
@@ -62,8 +59,8 @@ function AppSidebar() {
   const pathname = usePathname();
   const { open, setOpen, toggleSidebar, state } = useSidebar();
   
-  const isProjectRoute = pathname.startsWith('/projects');
-  const isAwarenessRoute = pathname.startsWith('/awareness');
+  const isProjectRoute = pathname.startsWith('/admin/projects');
+  const isAwarenessRoute = pathname.startsWith('/admin/awareness');
 
   const [isProjectsOpen, setIsProjectsOpen] = React.useState(isProjectRoute);
   const [isAwarenessOpen, setIsAwarenessOpen] = React.useState(isAwarenessRoute);
@@ -110,24 +107,24 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <Link href="/projects/new">
-                    <SidebarMenuSubButton isActive={pathname === '/projects/new'}>
+                  <Link href="/admin/projects/new">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/new'}>
                       <Briefcase className="mr-2" />
                       New Projects
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/projects/tender">
-                    <SidebarMenuSubButton isActive={pathname === '/projects/tender'}>
+                  <Link href="/admin/projects/tender">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/tender'}>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/projects/schemes">
-                    <SidebarMenuSubButton isActive={pathname === '/projects/schemes'}>
+                  <Link href="/admin/projects/schemes">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/schemes'}>
                       <Lightbulb className="mr-2" />
                       New Schemes
                     </SidebarMenuSubButton>
@@ -151,16 +148,16 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <Link href="/awareness/job-sector-prediction">
-                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-sector-prediction'}>
+                  <Link href="/admin/awareness/job-sector-prediction">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/awareness/job-sector-prediction'}>
                       <TrendingUp className="mr-2" />
                       Job Sector Prediction
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/awareness/job-risk-awareness">
-                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-risk-awareness'}>
+                  <Link href="/admin/awareness/job-risk-awareness">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/awareness/job-risk-awareness'}>
                       <AlertTriangle className="mr-2" />
                       Job Risk Awareness
                     </SidebarMenuSubButton>

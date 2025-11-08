@@ -5,22 +5,18 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Define admin paths
-  const adminPaths = ['/dashboard', '/projects', '/awareness'];
-  const isAdminPath = adminPaths.some(adminPath => path.startsWith(adminPath));
-
   // If the user is trying to access an admin path
-  if (isAdminPath) {
+  if (path.startsWith('/admin') && path !== '/admin/login') {
     // This is a simple check. In a real app, you'd verify a token.
     const isAdminAuthenticated = true; // Replace with real auth check
     if (!isAdminAuthenticated) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 
-  // If the user is at the root and wants to go to admin, redirect to /login
-  if (path === '/admin') {
-    return NextResponse.redirect(new URL('/login', request.url));
+  // Redirect from / to /register/identity for citizen flow
+  if (path === '/') {
+    return NextResponse.redirect(new URL('/register/identity', request.url));
   }
   
   // All other requests pass through
@@ -35,14 +31,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * Public pages that don't need auth checks:
-     * - login
-     * - register
-     * - the root path itself (handled by the main logic)
+     * Public pages that don't need auth checks are handled by the logic above.
      */
-    '/dashboard/:path*',
-    '/projects/:path*',
-    '/awareness/:path*',
-    '/admin',
+    '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],
 };
