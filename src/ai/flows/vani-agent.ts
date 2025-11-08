@@ -61,10 +61,16 @@ const vaniTextResponsePrompt = ai.definePrompt({
 
   - Language: Always respond in the language specified (e.g., '{{language}}').
   - Simplicity: Use simple, clear, and encouraging words.
-  - Context: You will be given the current conversation state. Use it to guide the conversation.
+  - Context: You will be given the current conversation state as a JSON object. Use it to guide the conversation.
   - Task: Your main goal is to extract skills from the user's description of their work.
 
-  Current State: {{conversationState}}
+  Conversation State (JSON):
+  {{#if conversationState}}
+  {{{JSON.stringify conversationState}}}
+  {{else}}
+  {}
+  {{/if}}
+
   User's input: "{{textQuery}}"
 
   Based on the user's input:
@@ -76,6 +82,7 @@ const vaniTextResponsePrompt = ai.definePrompt({
   Output the result in the specified JSON format.
 `,
 });
+
 
 const vaniAgentFlow = ai.defineFlow(
   {
@@ -97,7 +104,7 @@ const vaniAgentFlow = ai.defineFlow(
           responseModalities: ['AUDIO'],
           speechConfig: {
             voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'en-US-Standard-F' }, // Changed to a female voice
+              prebuiltVoiceConfig: { voiceName: 'en-US-Wavenet-F' }, // Using a compatible female voice
             },
           },
         },
