@@ -42,7 +42,10 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
-  useSidebar
+  useSidebar,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
