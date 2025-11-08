@@ -70,19 +70,44 @@ function AppSidebar() {
           <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">
           <div className="bg-primary-foreground rounded-lg p-1.5 flex items-center justify-center">
              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-primary"
-              >
-                <path d="M9 17C9 19.2091 10.7909 21 13 21C15.2091 21 17 19.2091 17 17C17 14.7909 15.2091 13 13 13C10.7909 13 9 14.7909 9 17Z" stroke="currentColor" strokeWidth="2"/>
-                <path d="M15 6L12 3L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 3V13" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M17.8285 5.17157C19.2427 6.58579 20 8.53553 20 10.5858C20 11.857 19.5639 13.0454 18.8285 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                <path d="M6.17157 5.17157C4.75736 6.58579 4 8.53553 4 10.5858C4 11.857 4.43612 13.0454 5.17157 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-              </svg>
+      width="24px"
+      height="24px"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="text-primary"
+    >
+      <path
+        d="M10 17C10 19.2091 11.7909 21 14 21C16.2091 21 18 19.2091 18 17C18 14.7909 16.2091 13 14 13C11.7909 13 10 14.7909 10 17Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path
+        d="M16.5 6.5L14 3L11.5 6.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M14 3V13"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M19.9999 5.82843C21.3136 7.14214 22 8.97189 22 11C22 12.3567 21.5218 13.6273 20.7322 14.6"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M3.26777 14.6C2.47817 13.6273 2 12.3567 2 11C2 8.97189 2.68629 7.14214 4.00001 5.82843"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
             </div>
             {state === 'expanded' && (
               <h1 className="text-xl font-semibold text-sidebar-foreground">
