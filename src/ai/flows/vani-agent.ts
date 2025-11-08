@@ -8,7 +8,6 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import wav from 'wav';
 import {
     VaniAgentInputSchema,
     VaniAgentOutputSchema,
@@ -35,32 +34,6 @@ function getIndianFemaleVoice(language: string): string {
     }
 }
 
-/**
- * Converts raw PCM audio data buffer to a base64 encoded WAV format.
- * NOTE: This relies on the "wav" library and the assumption that the 
- * TTS model output is raw PCM (Linear16).
- */
-async function toWav(
-    pcmData: Buffer,
-    channels = 1,
-    rate = 24000,
-    sampleWidth = 2
-): Promise<string> {
-    return new Promise((resolve, reject) => {
-        const writer = new wav.Writer({
-            channels,
-            sampleRate: rate,
-            bitDepth: sampleWidth * 8,
-        });
-
-        const bufs: Buffer[] = [];
-        writer.on('error', reject);
-        writer.on('data', (d) => bufs.push(d));
-        writer.on('end', () => resolve(Buffer.concat(bufs).toString('base64')));
-        writer.write(pcmData);
-        writer.end();
-    });
-}
 
 // --- Genkit Flow Definition ---
 
@@ -129,22 +102,18 @@ const vaniAgentFlow = ai.defineFlow(
         if (!audioMedia?.url) {
             throw new Error('TTS model failed to return audio.');
         }
-
-        // 3. Process the audio URI and convert to WAV format.
-        const dataUriPrefix = 'data:audio/l16;base64,'; 
+        
+        const dataUriPrefix = 'data:audio/mpeg;base64,';
         if (!audioMedia.url.startsWith(dataUriPrefix)) {
-             console.error('TTS URL prefix mismatch:', audioMedia.url.substring(0, 30));
-             throw new Error('TTS returned an unexpected audio format/URI type.');
+            console.error('TTS URL prefix mismatch:', audioMedia.url.substring(0, 30));
+            throw new Error('TTS returned an unexpected audio format/URI type.');
         }
 
-        const base64Data = audioMedia.url.substring(dataUriPrefix.length);
-        const pcmData = Buffer.from(base64Data, 'base64');
-        const wavBase64 = await toWav(pcmData);
 
         // 4. Return the combined output.
         return {
             ...agentResponse,
-            audioDataUri: `data:audio/wav;base64,${wavBase64}`,
+            audioDataUri: audioMedia.url,
         };
     }
 );
