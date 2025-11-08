@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -20,6 +21,7 @@ import {
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -41,7 +43,9 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
+  useSidebar,
   SidebarMenuSub,
+  SidebarMenuSubItem,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   useSidebar,
@@ -52,6 +56,8 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {PlaceHolderImages} from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
+import React from 'react';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
@@ -106,8 +112,8 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="/dashboard">
-              <SidebarMenuButton tooltip="Dashboard">
+            <Link href="/admin/dashboard">
+              <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/admin/dashboard'}>
                 <LayoutDashboard />
                 Dashboard
               </SidebarMenuButton>
@@ -132,24 +138,24 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <Link href="/projects/new">
-                    <SidebarMenuSubButton>
+                  <Link href="/admin/projects/new">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/new'}>
                       <Briefcase className="mr-2" />
                       New Projects
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/projects/tender">
-                    <SidebarMenuSubButton>
+                  <Link href="/admin/projects/tender">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/tender'}>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/projects/schemes">
-                    <SidebarMenuSubButton>
+                  <Link href="/admin/projects/schemes">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/schemes'}>
                       <Lightbulb className="mr-2" />
                       New Schemes
                     </SidebarMenuSubButton>
@@ -177,16 +183,16 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <Link href="/awareness/job-sector-prediction">
-                    <SidebarMenuSubButton>
+                  <Link href="/admin/awareness/job-sector-prediction">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/awareness/job-sector-prediction'}>
                       <TrendingUp className="mr-2" />
                       Job Sector Prediction
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/awareness/job-risk-awareness">
-                    <SidebarMenuSubButton>
+                  <Link href="/admin/awareness/job-risk-awareness">
+                    <SidebarMenuSubButton isActive={pathname === '/admin/awareness/job-risk-awareness'}>
                       <AlertTriangle className="mr-2" />
                       Job Risk Awareness
                     </SidebarMenuSubButton>
@@ -214,7 +220,7 @@ function AppSidebar() {
 function AppHeader() {
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
-      <SidebarTrigger />
+      <SidebarTrigger className="flex md:hidden" />
       <div className="w-full flex-1">
         <form>
           <div className="relative">

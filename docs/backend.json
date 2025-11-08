@@ -1,0 +1,88 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "Represents a citizen's profile in the Skill Intel Engine.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The unique identifier for the user, typically from Firebase Auth."
+        },
+        "aadhaarId": {
+          "type": "string",
+          "description": "The user's Aadhaar number (hashed or encrypted)."
+        },
+        "fullName": {
+          "type": "string"
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "format": "date"
+        },
+        "address": {
+          "type": "string"
+        },
+        "currentStatus": {
+          "type": "string",
+          "enum": ["Employed", "Looking for Work", "Student", "Homemaker", "Retired"]
+        },
+        "skills": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "skillId": {
+                "type": "string",
+                "description": "Identifier from the NOS/QP taxonomy."
+              },
+              "skillName": {
+                "type": "string"
+              },
+              "proficiency": {
+                "type": "string",
+                "enum": ["Beginner", "Intermediate", "Expert"]
+              }
+            },
+            "required": ["skillId", "skillName", "proficiency"]
+          }
+        },
+        "experience": {
+          "type": "object",
+          "properties": {
+            "sectorType": {
+              "type": "string",
+              "enum": ["Formal", "Informal"]
+            },
+            "toolsAndTech": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "aspirations": {
+          "type": "string",
+          "description": "User's desired future job role or industry."
+        },
+        "profileCompleteness": {
+            "type": "number",
+            "description": "A score from 0 to 100 representing how complete the user's profile is."
+        }
+      },
+      "required": ["userId", "fullName", "dateOfBirth", "currentStatus"]
+    }
+  },
+  "auth": {
+    "providers": ["anonymous", "google.com"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/User"
+      },
+      "description": "Stores the skill profiles for all citizen users."
+    }
+  }
+}
