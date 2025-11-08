@@ -1,9 +1,11 @@
+
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
 import { Mic, MicOff, Send, Loader2, Bot, User, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { vaniAgent, VaniAgentInput, VaniAgentOutput } from '@/app/actions/vani-agent';
 
@@ -12,20 +14,26 @@ type Message = {
   text: string;
 };
 
-// Mock transcription for demonstration
-const mockTranscription = "I am a plumber, I fix taps and pipes in people's houses.";
-
 export default function VaniAiWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isListening, setIsListening] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationState, setConversationState] = useState<any>({});
+  const [inputText, setInputText] = useState('');
   const audioPlayerRef = useRef<HTMLAudioElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    if (isOpen) {
-      // Start with a greeting when the widget opens
+    scrollToBottom();
+  }, [messages]);
+
+  useEffect(() => {
+    if (isOpen && messages.length === 0) {
+      // Start with a greeting when the widget opens for the first time in a session
       handleInitialGreeting();
     }
   }, [isOpen]);
@@ -39,7 +47,6 @@ export default function VaniAiWidget() {
 
   const handleInitialGreeting = async () => {
     setIsLoading(true);
-    setMessages([]);
     try {
         const input: VaniAgentInput = { textQuery: 'Hello', language: 'en-IN' };
         const result = await vaniAgent(input);
@@ -57,22 +64,15 @@ export default function VaniAiWidget() {
     }
   };
   
-  const handleMicClick = async () => {
-    if (isListening) {
-      setIsListening(false);
-      // This is where you would stop recording and get the transcription.
-      // For now, we'll use a mock transcription.
-      const userMessageText = mockTranscription;
-      setMessages(prev => [...prev, { sender: 'user', text: userMessageText }]);
-      
-      // Send the transcribed text to the agent
-      await processUserMessage(userMessageText);
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
 
-    } else {
-      // This is where you would start the recording
-      setIsListening(true);
-      setMessages(prev => [...prev, { sender: 'bot', text: "I'm listening..." }]);
-    }
+    const userMessageText = inputText.trim();
+    setMessages(prev => [...prev, { sender: 'user', text: userMessageText }]);
+    setInputText('');
+    
+    await processUserMessage(userMessageText);
   };
 
   const processUserMessage = async (text: string) => {
@@ -158,20 +158,21 @@ export default function VaniAiWidget() {
                     </div>
                 </div>
             )}
+            <div ref={messagesEndRef} />
         </CardContent>
         <CardFooter className="p-3 border-t">
-          <Button 
-            onClick={handleMicClick}
-            size="lg" 
-            className={cn(
-                "w-full rounded-full h-14 transition-colors duration-300",
-                isListening ? "bg-red-500 hover:bg-red-600" : "bg-primary hover:bg-primary/90"
-            )}
-            disabled={isLoading}
-          >
-            {isListening ? <MicOff className="h-7 w-7" /> : <Mic className="h-7 w-7" />}
-            <span className="ml-2 font-semibold text-lg">{isListening ? "Tap to Stop" : "Tap to Speak"}</span>
-          </Button>
+          <form onSubmit={handleSendMessage} className="w-full flex items-center gap-2">
+            <Input
+                placeholder="Type your message..."
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                disabled={isLoading}
+                autoComplete="off"
+            />
+            <Button type="submit" size="icon" disabled={isLoading || !inputText.trim()}>
+                {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            </Button>
+          </form>
         </CardFooter>
       </Card>
       <audio ref={audioPlayerRef} hidden />
