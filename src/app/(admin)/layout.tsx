@@ -70,7 +70,7 @@ function AppSidebar() {
 
 
   return (
-    <Sidebar collapsible="icon" onOpenChange={setOpen} open={open}>
+    <Sidebar collapsible="icon">
       <SidebarHeader className={cn("p-4 transition-all", state === 'collapsed' && 'p-2')}>
         <div className={cn("flex items-center gap-2 transition-all", state === 'collapsed' ? 'justify-start' : 'justify-start')}>
           <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">

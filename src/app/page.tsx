@@ -17,11 +17,6 @@ export default function CitizenHomePage() {
             </div>
             <h1 className="text-xl font-semibold">Skill Intel Engine</h1>
           </div>
-           <Link href="/admin/login">
-            <p className="text-sm text-primary-foreground/80 hover:text-primary-foreground">
-                Admin Portal
-            </p>
-        </Link>
         </div>
       </header>
       <div className="flex flex-col items-center justify-center text-center space-y-8">

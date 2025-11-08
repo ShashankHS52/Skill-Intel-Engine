@@ -141,7 +141,7 @@ function AppHeader() {
   );
 }
 
-
+ 
 export default function CitizenLayout({
   children,
 }: Readonly<{
@@ -174,3 +174,4 @@ export default function CitizenLayout({
     </SidebarProvider>
   );
 }
+
