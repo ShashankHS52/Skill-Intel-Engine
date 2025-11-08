@@ -30,39 +30,9 @@ import {
   UploadCloud,
   X,
   FileText,
+  PlusCircle,
 } from 'lucide-react';
 import { extractSkills } from '@/app/actions/skill-extractor';
-
-const MOCK_CATEGORIES = {
-  Agriculture: [
-    'Crop Cultivation',
-    'Soil Management',
-    'Irrigation Techniques',
-    'Pest Control',
-    'Tractor Operation',
-  ],
-  Construction: [
-    'Masonry',
-    'Plumbing',
-    'Electrical Wiring',
-    'Carpentry',
-    'Site Supervision',
-  ],
-  Textiles: [
-    'Sewing & Stitching',
-    'Pattern Making',
-    'Fabric Cutting',
-    'Embroidery',
-    'Loom Operation',
-  ],
-  'IT & Digital': [
-    'Basic Computer Use',
-    'MS Office',
-    'Digital Payments',
-    'Social Media Management',
-    'Hardware Troubleshooting',
-  ],
-};
 
 type Skill = {
   name: string;
@@ -74,7 +44,7 @@ export default function SkillProfilingPage() {
   const [aiLoading, setAiLoading] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [jobDescription, setJobDescription] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('Agriculture');
+  const [manualSkill, setManualSkill] = useState('');
   const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
 
   const addSkill = (skillName: string) => {
@@ -89,6 +59,11 @@ export default function SkillProfilingPage() {
         { name: skillName, proficiency: 'Beginner' },
       ]);
     }
+  };
+
+  const handleManualAdd = () => {
+    addSkill(manualSkill);
+    setManualSkill('');
   };
 
   const removeSkill = (skillName: string) => {
@@ -152,22 +127,19 @@ export default function SkillProfilingPage() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="ai-assisted">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="ai-assisted">
                 <Sparkles className="mr-2 h-4 w-4" /> AI Assisted
-              </TabsTrigger>
-              <TabsTrigger value="category-picker">
-                <List className="mr-2 h-4 w-4" /> Category Picker
               </TabsTrigger>
               <TabsTrigger value="upload">
                 <UploadCloud className="mr-2 h-4 w-4" /> Upload
               </TabsTrigger>
             </TabsList>
             
-            <TabsContent value="ai-assisted" className="mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="job-description">
-                  Describe your job or what you do in your own words
+            <TabsContent value="ai-assisted" className="mt-4 space-y-6">
+              <div>
+                <Label htmlFor="job-description" className='text-base font-medium'>
+                  Describe your job to get AI suggestions
                 </Label>
                 <Textarea
                   id="job-description"
@@ -175,8 +147,9 @@ export default function SkillProfilingPage() {
                   value={jobDescription}
                   onChange={e => setJobDescription(e.target.value)}
                   rows={4}
+                  className="mt-2"
                 />
-                <Button onClick={handleAiAnalysis} disabled={aiLoading || !jobDescription}>
+                <Button onClick={handleAiAnalysis} disabled={aiLoading || !jobDescription} className="mt-2">
                   {aiLoading && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
@@ -194,38 +167,26 @@ export default function SkillProfilingPage() {
                         variant="secondary"
                         onClick={() => addSkill(skill)}
                       >
+                        <PlusCircle className='mr-2' />
                         {skill}
                       </Button>
                     ))}
                   </div>
                 </div>
               )}
-            </TabsContent>
-
-            <TabsContent value="category-picker" className="mt-4">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                    <Label>Select a Category</Label>
-                    <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Choose a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {Object.keys(MOCK_CATEGORIES).map(cat => (
-                                <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div>
-                  <h4 className="font-semibold">Select Your Skills:</h4>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {(MOCK_CATEGORIES[selectedCategory as keyof typeof MOCK_CATEGORIES] || []).map(skill => (
-                      <Button key={skill} variant="outline" onClick={() => addSkill(skill)}>
-                        {skill}
-                      </Button>
-                    ))}
-                  </div>
+               <div className='border-t pt-6'>
+                <Label htmlFor="manual-skill" className='text-base font-medium'>Or, add a skill manually</Label>
+                 <div className="flex items-center gap-2 mt-2">
+                    <Input
+                        id="manual-skill"
+                        placeholder="e.g., Welding"
+                        value={manualSkill}
+                        onChange={(e) => setManualSkill(e.target.value)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleManualAdd()}
+                    />
+                    <Button onClick={handleManualAdd} disabled={!manualSkill}>
+                        Add Skill
+                    </Button>
                 </div>
               </div>
             </TabsContent>
