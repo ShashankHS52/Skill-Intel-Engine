@@ -14,6 +14,8 @@ type Message = {
   text: string;
 };
 
+const INITIAL_GREETING = "Hello! I'm Vani, your AI assistant. How can I help you build your skill profile today? You can tell me what kind of work you do.";
+
 export default function VaniAiWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,34 +35,15 @@ export default function VaniAiWidget() {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Start with a greeting when the widget opens for the first time in a session
-      handleInitialGreeting();
+      // Start with a static text greeting to avoid unnecessary API calls on open.
+      setMessages([{ sender: 'bot', text: INITIAL_GREETING }]);
     }
-  }, [isOpen]);
+  }, [isOpen, messages.length]);
 
   const playAudio = (audioDataUri: string) => {
     if (audioPlayerRef.current) {
         audioPlayerRef.current.src = audioDataUri;
         audioPlayerRef.current.play().catch(e => console.error("Audio playback failed:", e));
-    }
-  };
-
-  const handleInitialGreeting = async () => {
-    setIsLoading(true);
-    try {
-        const input: VaniAgentInput = { textQuery: 'Hello', language: 'en-IN' };
-        const result = await vaniAgent(input);
-
-        setMessages([{ sender: 'bot', text: result.responseText }]);
-        setConversationState(result.updatedConversationState);
-        if (result.audioDataUri) {
-          playAudio(result.audioDataUri);
-        }
-    } catch (error) {
-        console.error("Error with initial greeting:", error);
-        setMessages([{ sender: 'bot', text: "Sorry, I'm having trouble connecting. Please try again later." }]);
-    } finally {
-        setIsLoading(false);
     }
   };
   
