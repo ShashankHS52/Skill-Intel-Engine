@@ -66,8 +66,8 @@ function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" onOpenChange={setOpen} open={open}>
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
+      <SidebarHeader className={cn("p-4 transition-all", state === 'collapsed' && 'p-2')}>
+        <div className={cn("flex items-center gap-2 transition-all", state === 'collapsed' ? 'justify-start' : 'justify-start')}>
           <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">
           <div className={cn("bg-primary-foreground rounded-lg p-1 flex items-center justify-center transition-all", state === 'expanded' ? 'w-14 h-14' : 'w-10 h-10')}>
              <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={state === 'expanded' ? 58 : 32} height={state === 'expanded' ? 58 : 32} />
