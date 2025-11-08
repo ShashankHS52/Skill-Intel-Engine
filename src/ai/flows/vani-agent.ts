@@ -79,11 +79,7 @@ const vaniTextResponsePrompt = ai.definePrompt({
     - Task: Your main goal is to extract skills from the user's description of their work.
 
     Conversation State (JSON):
-    {{#if conversationState}}
-    {{{JSON.stringify conversationState}}}
-    {{else}}
-    {}
-    {{/if}}
+    {{{conversationState}}}
 
     User's input: "{{textQuery}}"
 
@@ -108,8 +104,7 @@ const vaniAgentFlow = ai.defineFlow(
         // 1. Get the text response from the main LLM.
         const { output: agentResponse } = await vaniTextResponsePrompt({
             ...input,
-            language: input.language, 
-            conversationState: input.conversationState || {},
+            conversationState: JSON.stringify(input.conversationState || {}),
         });
         if (!agentResponse) {
             throw new Error('Vani agent failed to generate a text response.');
