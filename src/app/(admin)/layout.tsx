@@ -57,6 +57,7 @@ import {
 import {PlaceHolderImages} from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import React from 'react';
+import Footer from '@/components/layout/footer';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 function AppSidebar() {
@@ -86,23 +87,16 @@ function AppSidebar() {
   };
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4">
+      <SidebarHeader className="">
         <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
-          <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-primary-foreground"
-            >
-              <path
-                d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.219L19.531 8.5V15.5L12 19.781L4.469 15.5V8.5L12 4.219ZM12 9C10.343 9 9 10.343 9 12C9 13.657 10.343 15 12 15C13.657 15 15 13.657 15 12C15 10.343 13.657 9 12 9Z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
+            <Image
+              src="/logo.svg"
+              alt="Skill Intel Logo"
+              width={54}
+              height={54}
+              className="cursor-pointer flex-shrink-0"
+              onClick={() => setOpen(!open)}
+            />
           <h1 className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
             Skill Intel
           </h1>
@@ -261,11 +255,12 @@ export default function AdminLayout({
     <SidebarProvider defaultOpen={false}>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="flex flex-col">
           <AppHeader />
           <main className="flex flex-1 flex-col gap-6 p-4 lg:gap-8 lg:p-6">
             {children}
           </main>
+          <Footer />
         </SidebarInset>
       </div>
     </SidebarProvider>
