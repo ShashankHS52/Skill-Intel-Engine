@@ -89,7 +89,7 @@ export const upcomingProjects = [
 
 function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
           <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
