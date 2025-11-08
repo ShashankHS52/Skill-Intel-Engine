@@ -41,7 +41,7 @@ export async function vaniAgent(input: VaniAgentInput): Promise<VaniAgentOutput>
       userQuery = "I couldn't understand the audio.";
     }
   }
-
+  
   // If the user's query is very short and no skills have been found yet, it might be a simple greeting.
   if (userQuery.trim().length < 15 && !input.conversationState?.skillsFound) {
       const greetingResponse = "Hello! I'm Vani. Please tell me about the work you do so I can help build your skill profile.";
@@ -89,18 +89,21 @@ const vaniTextResponsePrompt = ai.definePrompt({
 - Language: Always respond in the language specified (e.g., '{{language}}').
 - Simplicity: Use simple, clear, and encouraging words. Avoid jargon.
 - Conversation Flow:
-  1.  **Greeting**: If the user gives a short greeting or a simple job title, greet them warmly and ask them to describe their work in more detail.
+  1.  **Greeting & Initial Prompt**: If the conversation has just started, greet the user warmly and ask them to describe their work.
   2.  **Skill Extraction**: When the user describes their work (e.g., "I fix tractors," "I am a school teacher"), analyze their description to identify 3-5 concrete, real-world skills.
         - Example 1: User says "I am a teacher." You suggest: "Teaching," "Lesson Planning," "Student Assessment."
         - Example 2: User says "I work in a garage and fix cars." You suggest: "Engine Diagnostics," "Automobile Repair," "Customer Service."
-  3.  **Confirmation**: After extracting skills, ask the user for confirmation in a simple way. For example: "That's great! Based on what you said, I've noted down these skills: [list skills]. Is that correct?"
-  4.  **Clarification**: If the user's description is unclear, ask a simple follow-up question. For example: "That's interesting. Can you tell me a little more about what you do every day?"
-  5.  **State Management**: Use the conversation state to remember what has been discussed.
+  3.  **Confirmation**: After extracting skills, ask the user for confirmation in a simple way. For example: "That's great! Based on what you said, I've noted down these skills: [list skills]. Is that correct?" Set the 'updatedConversationState' to '{ "skillsPendingConfirmation": true }'.
+  4.  **Handling Confirmation**: If the 'conversationState' shows 'skillsPendingConfirmation', the user's response is likely a "yes" or "no".
+        - If "yes", respond with something like: "Excellent! Thanks for confirming. Is there any other work you do that you'd like to add?"
+        - If "no", respond with: "My mistake. Could you please describe your work again for me?"
+  5.  **Clarification**: If the user's description is unclear or too short, ask a simple follow-up question. For example: "That's interesting. Can you tell me a little more about what you do every day?"
+  6.  **State Management**: Use the conversation state to remember what has been discussed. Don't greet the user again if a conversation is in progress.
 
 Current State: {{conversationState}}
 User's input: "{{textQuery}}"
 
-Based on the user's input, formulate a simple, clear response. Extract skills if possible. Update the conversation state. Determine if the conversation should continue.
+Based on the user's input and the current state, formulate a simple, clear response. Extract skills if possible. Update the conversation state. Determine if the conversation should continue.
 
 Output the result in the specified JSON format.
 `,
@@ -131,21 +134,23 @@ const vaniAgentFlow = ai.defineFlow(
     
     // 2. Synthesize the text response into audio.
     try {
-        const { media: audioMedia } = await ai.generate({
-            model: 'googleai/gemini-2.5-flash-preview-tts',
-            config: {
-              responseModalities: ['AUDIO'],
-              speechConfig: {
-                voiceConfig: {
-                  prebuiltVoiceConfig: { voiceName: 'Algenib' }, // Default voice
+        if (agentResponse.responseText) {
+            const { media: audioMedia } = await ai.generate({
+                model: 'googleai/gemini-2.5-flash-preview-tts',
+                config: {
+                  responseModalities: ['AUDIO'],
+                  speechConfig: {
+                    voiceConfig: {
+                      prebuiltVoiceConfig: { voiceName: 'Algenib' }, // Default voice
+                    },
+                  },
                 },
-              },
-            },
-            prompt: agentResponse.responseText,
-        });
-        
-        if (audioMedia?.url) {
-            agentResponse.audioDataUri = audioMedia.url;
+                prompt: agentResponse.responseText,
+            });
+            
+            if (audioMedia?.url) {
+                agentResponse.audioDataUri = audioMedia.url;
+            }
         }
 
     } catch(e) {
@@ -158,3 +163,13 @@ const vaniAgentFlow = ai.defineFlow(
     return agentResponse;
   }
 );
+
+async function toWav(
+  pcmData: Buffer,
+  channels = 1,
+  rate = 24000,
+  sampleWidth = 2
+): Promise<string> {
+    // This function is no longer needed but kept for reference if format changes.
+    return Promise.resolve('');
+}
