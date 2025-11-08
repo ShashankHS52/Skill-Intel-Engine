@@ -13,7 +13,27 @@ export default function CitizenHomePage() {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-primary-foreground rounded-lg p-1.5 flex items-center justify-center">
-              <Image src="/logo.png" alt="Skill Intel Logo" width={20} height={20} className="text-primary" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="text-primary"
+              >
+                <path
+                  d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M12 6C9.79 6 8 7.79 8 10H10C10 8.9 10.9 8 12 8C13.1 8 14 8.9 14 10C14 11.1 13.1 12 12 12H11V14H13V12C14.1 12 15 11.1 15 10C15 7.79 13.21 6 12 6Z"
+                  fill="currentColor"
+                />
+                <path
+                  d="M13 16H11V18H13V16Z"
+                  fill="currentColor"
+                />
+              </svg>
             </div>
             <h1 className="text-xl font-semibold">Skill Intel Engine</h1>
           </div>
