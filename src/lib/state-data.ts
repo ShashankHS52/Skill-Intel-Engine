@@ -225,7 +225,7 @@ export const stateWiseData: Record<string, StateData> = {
   },
   'in-mh': {
     id: 'in-mh',
-    name: 'Maharashtra',
+    name: 'Mandya',
     unemployment: 4.6,
     employmentRate: 87.8,
     skillDensity: 4.0,

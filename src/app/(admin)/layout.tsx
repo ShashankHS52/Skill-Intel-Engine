@@ -18,7 +18,8 @@ import {
   TrendingUp,
   AlertTriangle,
 } from 'lucide-react';
-import { usePathname } from 'next/navigation';
+
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -46,6 +47,8 @@ import {
   SidebarMenuSub,
   SidebarMenuSubItem,
   SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
@@ -59,30 +62,51 @@ import React from 'react';
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
 function AppSidebar() {
-  const pathname = usePathname();
-  const { open, setOpen, toggleSidebar, state } = useSidebar();
-  
-  const isProjectRoute = pathname.startsWith('/admin/projects');
-  const isAwarenessRoute = pathname.startsWith('/admin/awareness');
+  const { open, setOpen } = useSidebar();
+  const [projectsOpen, setProjectsOpen] = useState(false);
+  const [awarenessOpen, setAwarenessOpen] = useState(false);
 
-  const [isProjectsOpen, setIsProjectsOpen] = React.useState(isProjectRoute);
-  const [isAwarenessOpen, setIsAwarenessOpen] = React.useState(isAwarenessRoute);
+  const handleProjectsClick = () => {
+    if (!open) {
+      setOpen(true);
+      // Small delay to ensure sidebar opens before expanding
+      setTimeout(() => setProjectsOpen(true), 100);
+    } else {
+      setProjectsOpen(!projectsOpen);
+    }
+  };
 
-
+  const handleAwarenessClick = () => {
+    if (!open) {
+      setOpen(true);
+      // Small delay to ensure sidebar opens before expanding
+      setTimeout(() => setAwarenessOpen(true), 100);
+    } else {
+      setAwarenessOpen(!awarenessOpen);
+    }
+  };
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className={cn("p-4 transition-all", state === 'collapsed' && 'p-2')}>
-        <div className={cn("flex items-center gap-2 transition-all", state === 'collapsed' ? 'justify-start' : 'justify-start')}>
-          <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">
-          <div className={cn("bg-primary-foreground rounded-lg p-1 flex items-center justify-center transition-all", state === 'expanded' ? 'w-14 h-14' : 'w-10 h-10')}>
-             <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={state === 'expanded' ? 58 : 32} height={state === 'expanded' ? 58 : 32} />
-            </div>
-            {state === 'expanded' && (
-              <h1 className="text-xl font-semibold text-sidebar-foreground">
-                Skill Intel
-              </h1>
-            )}
-          </button>
+      <SidebarHeader className="p-4">
+        <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+          <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="text-primary-foreground"
+            >
+              <path
+                d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.219L19.531 8.5V15.5L12 19.781L4.469 15.5V8.5L12 4.219ZM12 9C10.343 9 9 10.343 9 12C9 13.657 10.343 15 12 15C13.657 15 15 13.657 15 12C15 10.343 13.657 9 12 9Z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+          <h1 className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+            Skill Intel
+          </h1>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -95,10 +119,14 @@ function AppSidebar() {
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
-          <Collapsible open={isProjectsOpen} onOpenChange={setIsProjectsOpen}>
+          <Collapsible open={projectsOpen} onOpenChange={setProjectsOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Projects" className="justify-between" isActive={isProjectRoute}>
+                <SidebarMenuButton 
+                  tooltip="Projects" 
+                  className="justify-between"
+                  onClick={handleProjectsClick}
+                >
                   <div className="flex items-center gap-2">
                     <FolderKanban />
                     Projects
@@ -136,10 +164,14 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-          <Collapsible open={isAwarenessOpen} onOpenChange={setIsAwarenessOpen}>
+          <Collapsible open={awarenessOpen} onOpenChange={setAwarenessOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Awareness" className="justify-between" isActive={isAwarenessRoute}>
+                <SidebarMenuButton 
+                  tooltip="Awareness" 
+                  className="justify-between"
+                  onClick={handleAwarenessClick}
+                >
                   <div className="flex items-center gap-2">
                     <TrendingUp />
                     Awareness
