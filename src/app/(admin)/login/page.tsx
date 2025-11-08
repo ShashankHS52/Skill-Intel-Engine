@@ -29,12 +29,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Admin Login</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account.
+            Enter your credentials to access the admin dashboard.
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
