@@ -44,7 +44,7 @@ export default function ScenarioTesting() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      factoryLocation: 'Pune, Maharashtra',
+      factoryLocation: 'Mysuru ,Uttara Kannada',
       laborTypesRequired: 'Automobile engineers, supply chain specialists, robotics technicians',
       additionalContext: 'A new electric vehicle (EV) manufacturing plant is being set up as part of the Make in India initiative.',
     },
@@ -89,7 +89,7 @@ export default function ScenarioTesting() {
               <FormItem>
                 <FormLabel>New Development Location</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Pune, Maharashtra" {...field} />
+                  <Input placeholder="e.g., Mysuru" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

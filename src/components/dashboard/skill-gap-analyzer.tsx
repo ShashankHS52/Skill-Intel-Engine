@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -35,13 +34,19 @@ import {
 import { analyzeSkillGaps } from '@/app/actions/analyze-skill-gaps';
 import type { SkillGapOutput } from '@/ai/flows/skill-gap-analyzer';
 import { Skeleton } from '../ui/skeleton';
+import { karnatakaDistrictData } from '@/lib/karnataka-data';
 
 const formSchema = z.object({
   sector: z.string().min(2, { message: 'Sector is required.' }),
-  region: z.string().min(2, { message: 'Region is required.' }),
+  region: z.string().min(2, { message: 'District is required.' }),
   proficiencyLevel: z.string().min(2, { message: 'Proficiency is required.' }),
   specificConsiderations: z.string().optional(),
 });
+
+// Get sorted district list
+const districtOptions = Object.values(karnatakaDistrictData)
+  .map(district => ({ id: district.id, name: district.name }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 export default function SkillGapAnalyzer() {
   const [result, setResult] = useState<SkillGapOutput | null>(null);
@@ -52,7 +57,7 @@ export default function SkillGapAnalyzer() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       sector: 'Technology',
-      region: 'Maharashtra',
+      region: 'Mandya',
       proficiencyLevel: 'Mid-level',
       specificConsiderations: 'Focus on AI and ML skills shortage in the fintech sub-sector.',
     },
@@ -108,10 +113,24 @@ export default function SkillGapAnalyzer() {
             name="region"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Region</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., Maharashtra" {...field} />
-                </FormControl>
+                <FormLabel>District</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a district" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent className="max-h-[200px]">
+                    {districtOptions.map((district) => (
+                      <SelectItem key={district.id} value={district.name}>
+                        {district.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
