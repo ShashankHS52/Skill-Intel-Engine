@@ -3,9 +3,7 @@
 
 /**
  * @fileOverview The "Vani AI" voice assistant agent for citizen users.
- * * NOTE: This code uses mock data for multilingual voice mapping (getIndianFemaleVoice) 
- * and assumes the 'wav' library correctly handles the raw PCM output data format 
- * returned by the TTS model. A proper implementation would verify the exact audio format.
+ * NOTE: This code is optimized for Kannada (kn) and English (en) multilingual support.
  */
 
 import { ai } from '@/ai/genkit';
@@ -21,31 +19,26 @@ import {
 // --- Utility Functions ---
 
 /**
- * Mock utility to select a female voice based on the required language.
- * In a real application, this would map language codes (e.g., 'hi') to 
- * the appropriate Google Cloud TTS voice names (e.g., 'hi-IN-Wavenet-A').
- * @param language - The two-letter language code (e.g., 'hi', 'ta', 'en').
+ * Utility to select a high-quality Indian female voice based on the required language.
+ * @param language - The two-letter language code ('kn' or 'en').
  * @returns The appropriate Google TTS voice name.
  */
 function getIndianFemaleVoice(language: string): string {
     switch (language.toLowerCase()) {
-        case 'hi':
-            return 'hi-IN-Wavenet-A'; // Hindi Female
-        case 'ta':
-            return 'ta-IN-Wavenet-A'; // Tamil Female
-        case 'te':
-            return 'te-IN-Wavenet-A'; // Telugu Female
+        case 'kn':
+            // High-fidelity Kannada Female voice
+            return 'kn-IN-Wavenet-A'; 
         case 'en':
         default:
-            // Fallback for English or unknown languages
-            return 'en-IN-Wavenet-A'; // Indian English Female
+            // High-fidelity Indian English Female voice (default fallback)
+            return 'en-IN-Wavenet-A'; 
     }
 }
 
 /**
  * Converts raw PCM audio data buffer to a base64 encoded WAV format.
  * NOTE: This relies on the "wav" library and the assumption that the 
- * TTS model output is raw PCM. This is the riskiest part of the implementation.
+ * TTS model output is raw PCM (Linear16).
  */
 async function toWav(
     pcmData: Buffer,
@@ -80,7 +73,7 @@ const vaniTextResponsePrompt = ai.definePrompt({
     output: { schema: VaniTextOutputSchema },
     prompt: `You are Vani, a friendly and patient AI voice assistant for the Skill Intel Engine. Your purpose is to help Indian citizens, especially those with low digital literacy, build their skill profile using their voice.
 
-    - Language: Always respond in the language specified (e.g., '${{language}}').
+    - Language: Always respond in the language specified (e.g., '${{language}}'). Use **Kannada** if the language code is 'kn', and **Indian English** if the code is 'en'.
     - Simplicity: Use simple, clear, and encouraging words.
     - Context: You will be given the current conversation state as a JSON object. Use it to guide the conversation.
     - Task: Your main goal is to extract skills from the user's description of their work.
@@ -113,8 +106,11 @@ const vaniAgentFlow = ai.defineFlow(
     },
     async (input) => {
         // 1. Get the text response from the main LLM.
-        // Pass the input object directly. Genkit handles serialization for the prompt.
-        const { output: agentResponse } = await vaniTextResponsePrompt(input);
+        const { output: agentResponse } = await vaniTextResponsePrompt({
+            ...input,
+            language: input.language, 
+            conversationState: input.conversationState || {},
+        });
         if (!agentResponse) {
             throw new Error('Vani agent failed to generate a text response.');
         }
@@ -128,7 +124,7 @@ const vaniAgentFlow = ai.defineFlow(
                 responseModalities: ['AUDIO'],
                 speechConfig: {
                     voiceConfig: {
-                        prebuiltVoiceConfig: { voiceName: voiceName }, // Using dynamic voice
+                        prebuiltVoiceConfig: { voiceName: voiceName },
                     },
                 },
             },
@@ -140,7 +136,7 @@ const vaniAgentFlow = ai.defineFlow(
         }
 
         // 3. Process the audio URI and convert to WAV format.
-        const dataUriPrefix = 'data:audio/l16;base64,';
+        const dataUriPrefix = 'data:audio/l16;base64,'; 
         if (!audioMedia.url.startsWith(dataUriPrefix)) {
              console.error('TTS URL prefix mismatch:', audioMedia.url.substring(0, 30));
              throw new Error('TTS returned an unexpected audio format/URI type.');
@@ -162,6 +158,5 @@ const vaniAgentFlow = ai.defineFlow(
 // --- Main Agent Function ---
 
 export async function vaniAgent(input: VaniAgentInput): Promise<VaniAgentOutput> {
-    // You should add validation here before calling the flow
     return vaniAgentFlow(input);
 }
