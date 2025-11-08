@@ -83,8 +83,8 @@ export default function IdentityVerificationPage() {
     setTimeout(() => {
       setLoading(false);
       // On success, redirect to the next step
-      // router.push('/register/profile-details');
-      alert('Verification Successful! (Next step not implemented yet)');
+      router.push('/citizen-dashboard');
+      alert('Verification Successful!');
     }, 1500);
   };
 

@@ -22,6 +22,7 @@ import {
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -46,9 +47,7 @@ import {
   useSidebar,
   SidebarMenuSub,
   SidebarMenuSubItem,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  useSidebar,
+  SidebarMenuSubButton
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
@@ -60,9 +59,9 @@ import { cn } from '@/lib/utils';
 import React from 'react';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
-
 function AppSidebar() {
   const { open, setOpen } = useSidebar();
+  const pathname = usePathname();
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [awarenessOpen, setAwarenessOpen] = useState(false);
 
@@ -112,8 +111,8 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="/admin/dashboard">
-              <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/admin/dashboard'}>
+            <Link href="/dashboard">
+              <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/dashboard'}>
                 <LayoutDashboard />
                 Dashboard
               </SidebarMenuButton>
@@ -138,24 +137,24 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <Link href="/admin/projects/new">
-                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/new'}>
+                  <Link href="/projects/new">
+                    <SidebarMenuSubButton isActive={pathname === '/projects/new'}>
                       <Briefcase className="mr-2" />
                       New Projects
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/admin/projects/tender">
-                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/tender'}>
+                  <Link href="/projects/tender">
+                    <SidebarMenuSubButton isActive={pathname === '/projects/tender'}>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/admin/projects/schemes">
-                    <SidebarMenuSubButton isActive={pathname === '/admin/projects/schemes'}>
+                  <Link href="/projects/schemes">
+                    <SidebarMenuSubButton isActive={pathname === '/projects/schemes'}>
                       <Lightbulb className="mr-2" />
                       New Schemes
                     </SidebarMenuSubButton>
@@ -183,16 +182,16 @@ function AppSidebar() {
             <CollapsibleContent asChild>
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
-                  <Link href="/admin/awareness/job-sector-prediction">
-                    <SidebarMenuSubButton isActive={pathname === '/admin/awareness/job-sector-prediction'}>
+                  <Link href="/awareness/job-sector-prediction">
+                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-sector-prediction'}>
                       <TrendingUp className="mr-2" />
                       Job Sector Prediction
                     </SidebarMenuSubButton>
                   </Link>
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
-                  <Link href="/admin/awareness/job-risk-awareness">
-                    <SidebarMenuSubButton isActive={pathname === '/admin/awareness/job-risk-awareness'}>
+                  <Link href="/awareness/job-risk-awareness">
+                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-risk-awareness'}>
                       <AlertTriangle className="mr-2" />
                       Job Risk Awareness
                     </SidebarMenuSubButton>
