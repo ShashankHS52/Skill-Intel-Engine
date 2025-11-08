@@ -69,7 +69,7 @@ function AppSidebar() {
         <div className="flex items-center gap-2">
           <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">
           <div className="bg-primary-foreground rounded-lg p-1 flex items-center justify-center">
-             <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={28} height={28} />
+             <Image src="/logo.svg" alt="Skill Intel Engine Logo" width={58} height={58} />
             </div>
             {state === 'expanded' && (
               <h1 className="text-xl font-semibold text-sidebar-foreground">
