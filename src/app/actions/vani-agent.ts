@@ -1,6 +1,8 @@
 'use server';
 
-import { vaniAgent as vaniAgentFlow, type VaniAgentInput, type VaniAgentOutput } from '@/ai/flows/vani-agent';
+import { vaniAgent as vaniAgentFlow } from '@/ai/flows/vani-agent';
+import type { VaniAgentInput, VaniAgentOutput } from '@/ai/flows/vani-agent-types';
+
 
 export async function vaniAgent(input: VaniAgentInput): Promise<VaniAgentOutput> {
   return await vaniAgentFlow(input);
