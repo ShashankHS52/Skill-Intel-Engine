@@ -9,7 +9,7 @@ import Image from 'next/image';
 export default function CitizenHomePage() {
   return (
     <>
-      <header className="bg-primary text-primary-foreground p-4 -mx-4 md:-mx-6 mb-8">
+      <header className="bg-primary text-primary-foreground p-4 -mx-4 -mt-4 md:-mx-6 md:-mt-6 mb-8">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div>
@@ -17,6 +17,11 @@ export default function CitizenHomePage() {
             </div>
             <h1 className="text-xl font-semibold">Skill Intel Engine</h1>
           </div>
+           <Link href="/admin/login">
+            <p className="text-sm text-primary-foreground/80 hover:text-primary-foreground">
+                Admin Portal
+            </p>
+        </Link>
         </div>
       </header>
       <div className="flex flex-col items-center justify-center text-center space-y-8">
