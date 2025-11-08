@@ -43,7 +43,7 @@ export async function vaniAgent(input: VaniAgentInput): Promise<VaniAgentOutput>
   }
   
   // If the user's query is very short and no skills have been found yet, it might be a simple greeting.
-  if (userQuery.trim().length < 15 && !input.conversationState?.skillsFound) {
+  if (userQuery.trim().length < 15 && !input.conversationState?.skillsConfirmed) {
       const greetingResponse = "Hello! I'm Vani. Please tell me about the work you do so I can help build your skill profile.";
       try {
           const { media: audioMedia } = await ai.generate({
@@ -88,24 +88,39 @@ const vaniTextResponsePrompt = ai.definePrompt({
 
 - Language: Always respond in the language specified (e.g., '{{language}}').
 - Simplicity: Use simple, clear, and encouraging words. Avoid jargon.
-- Conversation Flow:
-  1.  **Greeting & Initial Prompt**: If the conversation has just started, greet the user warmly and ask them to describe their work.
-  2.  **Skill Extraction**: When the user describes their work (e.g., "I fix tractors," "I am a school teacher"), analyze their description to identify 3-5 concrete, real-world skills.
-        - Example 1: User says "I am a teacher." You suggest: "Teaching," "Lesson Planning," "Student Assessment."
-        - Example 2: User says "I work in a garage and fix cars." You suggest: "Engine Diagnostics," "Automobile Repair," "Customer Service."
-  3.  **Confirmation**: After extracting skills, ask the user for confirmation in a simple way. For example: "That's great! Based on what you said, I've noted down these skills: [list skills]. Is that correct?" Set the 'updatedConversationState' to '{ "skillsPendingConfirmation": true }'.
-  4.  **Handling Confirmation**: If the 'conversationState' shows 'skillsPendingConfirmation', the user's response is likely a "yes" or "no".
-        - If "yes", respond with something like: "Excellent! Thanks for confirming. Is there any other work you do that you'd like to add?"
-        - If "no", respond with: "My mistake. Could you please describe your work again for me?"
-  5.  **Clarification**: If the user's description is unclear or too short, ask a simple follow-up question. For example: "That's interesting. Can you tell me a little more about what you do every day?"
-  6.  **State Management**: Use the conversation state to remember what has been discussed. Don't greet the user again if a conversation is in progress.
+- Conversation State: You MUST track the conversation using 'conversationState'.
+  - 'skillsPendingConfirmation': You have suggested skills and are waiting for a 'yes' or 'no'.
+  - 'skillsConfirmed': The user has confirmed their skills.
+  - DO NOT ask for skills again if 'skillsConfirmed' is true.
 
-Current State: {{conversationState}}
+Conversation Flow:
+
+1.  **Initial Interaction (No State)**:
+    - Greet the user warmly and ask them to describe their work.
+    - If the user describes their work (e.g., "I fix tractors," "I am a school teacher"), analyze their description to identify 3-5 concrete, real-world skills.
+    - Example 1: User says "I am a teacher." You suggest: "Teaching," "Lesson Planning," "Student Assessment."
+    - Example 2: User says "I work in a garage and fix cars." You suggest: "Engine Diagnostics," "Automobile Repair," "Customer Service."
+    - After suggesting skills, ask for confirmation: "Based on what you said, I've noted down these skills: [list skills]. Is that correct?"
+    - Set the 'updatedConversationState' to '{ "skillsPendingConfirmation": true }'.
+
+2.  **Confirmation Stage ('skillsPendingConfirmation' is true)**:
+    - The user's response is likely a "yes" or "no".
+    - If "yes" (or similar affirmative): Respond with "Excellent! Thanks for confirming. What other work do you do? You can also ask me about job opportunities." Set the 'updatedConversationState' to '{ "skillsConfirmed": true }'.
+    - If "no" (or similar negative): Respond with "My mistake. Could you please describe your work again for me?" Reset the state by setting 'updatedConversationState' to '{}'.
+
+3.  **Post-Confirmation Stage ('skillsConfirmed' is true)**:
+    - The user's main skills are now documented. DO NOT ask for their work description again.
+    - If the user asks about job opportunities: Provide a helpful, general response like, "That's a great question. Once your skill profile is complete, the system will match you with relevant job opportunities and training programs. Would you like to add any more skills or experience?"
+    - If the user provides more skills: Acknowledge them and say, "Got it, I've added that to your profile. Anything else?"
+    - If the user says "no" or "that's all": Respond with, "Great! Your skill profile is taking shape. You can continue to add more details on the dashboard." and set 'endConversation' to true.
+
+4.  **General Clarification**:
+    - If the user's description is unclear at any stage before confirmation, ask a simple follow-up question. For example: "That's interesting. Can you tell me a little more about what you do every day?"
+
+Current State: {{{conversationState}}}
 User's input: "{{textQuery}}"
 
-Based on the user's input and the current state, formulate a simple, clear response. Extract skills if possible. Update the conversation state. Determine if the conversation should continue.
-
-Output the result in the specified JSON format.
+Based on the user's input and the current state, formulate your response. Extract skills if appropriate. Update the conversation state correctly. Determine if the conversation should continue.
 `,
 });
 
@@ -164,12 +179,4 @@ const vaniAgentFlow = ai.defineFlow(
   }
 );
 
-async function toWav(
-  pcmData: Buffer,
-  channels = 1,
-  rate = 24000,
-  sampleWidth = 2
-): Promise<string> {
-    // This function is no longer needed but kept for reference if format changes.
-    return Promise.resolve('');
-}
+    
