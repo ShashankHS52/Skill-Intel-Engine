@@ -90,7 +90,7 @@ export default function IdentityVerificationPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="bg-primary text-primary-foreground pt-2 px-2 pb-2 mb-2">
+      <header className="bg-primary text-primary-foreground">
         <div className="container mx-auto flex items-center justify-start h-full">
           <div className="flex items-center gap-2">
             <div>
@@ -100,7 +100,7 @@ export default function IdentityVerificationPage() {
           </div>
         </div>
       </header>
-      <main className="flex-1 container mx-auto flex items-center justify-center p-4">
+      <main className="flex-1 container mx-auto flex items-center justify-center pt-4 px-20 pb-8 mb-8">
         <div className="w-full h-full rounded-lg grid lg:grid-cols-2">
           {/* Left Panel */}
           <div className="relative hidden lg:flex flex-col justify-between p-12 text-white bg-primary rounded-l-lg">

@@ -43,6 +43,7 @@ import {
 import {PlaceHolderImages} from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import VaniAiWidget from '@/components/citizen/vani-ai-widget';
+import AppFooter from '@/components/layout/footer';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
@@ -153,10 +154,13 @@ export default function CitizenLayout({
 
   if (isAuthPage) {
     return (
-        <div className="flex flex-col min-h-screen">
-          <main className="flex-1 container mx-auto p-4 md:p-6">
+        <div className='flex flex-col min-h-screen'>
+          <main className='flex-grow'>
             {children}
           </main>
+          <div className='container mx-auto'>
+            <AppFooter />
+          </div>
           <VaniAiWidget />
         </div>
     );
@@ -166,11 +170,14 @@ export default function CitizenLayout({
     <SidebarProvider defaultOpen={false}>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="flex flex-col">
           <AppHeader />
           <main className="flex flex-1 flex-col gap-6 p-4 lg:gap-8 lg:p-6">
             {children}
           </main>
+          <div className="px-6 pb-6">
+            <AppFooter />
+          </div>
         </SidebarInset>
       </div>
       <VaniAiWidget />
