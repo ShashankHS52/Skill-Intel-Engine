@@ -97,7 +97,7 @@ const vaniAgentFlow = ai.defineFlow(
           responseModalities: ['AUDIO'],
           speechConfig: {
             voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Algenib' }, // Default voice
+              prebuiltVoiceConfig: { voiceName: 'en-US-Standard-F' }, // Changed to a female voice
             },
           },
         },
