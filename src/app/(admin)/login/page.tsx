@@ -22,7 +22,7 @@ export default function LoginPage() {
   const handleLogin = () => {
     // Hardcoded credentials
     if (email === "admin@example.com" && password === "admin") {
-      router.push("/dashboard");
+      router.push("/admin/dashboard");
     } else {
       alert("Invalid credentials");
     }

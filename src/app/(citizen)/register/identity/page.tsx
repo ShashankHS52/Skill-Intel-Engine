@@ -128,8 +128,7 @@ export default function IdentityVerificationPage() {
             <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-card rounded-r-lg">
                 <Card className="w-full max-w-md border-0 shadow-none bg-transparent">
                     <CardHeader className="items-center text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 1200 400"><path fill="#1877f2" d="M1139.7 200c0-62.8-37.4-117.8-89.7-142.3v284.6c52.3-24.5 89.7-79.5 89.7-142.3z"/><path fill="#1877f2" d="M500 200c0 110.5 89.5 200 200 200s200-89.5 200-200-89.5-200-200-200-200 89.5-200 200zm283-49.1c16.3 0 29.5 13.2 29.5 29.5s-13.2 29.5-29.5 29.5-29.5-13.2-29.5-29.5 13.2-29.5 29.5-29.5zm-166 0c16.3 0 29.5 13.2 29.5 29.5s-13.2 29.5-29.5 29.5-29.5-13.2-29.5-29.5 13.2-29.5 29.5-29.5z"/><path fill="#1877f2" d="M300 342.3V57.7C196.2 84.8 120.3 186.2 120.3 300c0 62.8 37.4 117.8 89.7 142.3V157.7c-52.3 24.5-89.7 79.5-89.7 142.3z"/><path fill="#1877f2" d="M0 200c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S0 310.5 0 200zm283-49.1c16.3 0 29.5 13.2 29.5 29.5s-13.2 29.5-29.5 29.5-29.5-13.2-29.5-29.5 13.2-29.5 29.5-29.5zm-166 0c16.3 0 29.5 13.2 29.5 29.5s-13.2 29.5-29.5 29.5-29.5-13.2-29.5-29.5 13.2-29.5 29.5-29.5z"/></svg>
-                    <CardTitle>Start Your Skill Profile</CardTitle>
+                    <img src="/Aadhar-logo.svg" alt="" width={138} height={88}/>
                     <CardDescription>
                         Let's begin by verifying your identity with Aadhaar for a fast and secure setup.
                     </CardDescription>

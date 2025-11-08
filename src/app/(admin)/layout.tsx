@@ -82,8 +82,8 @@ function AppSidebar() {
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="/dashboard">
-              <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/dashboard'}>
+            <Link href="/admin/dashboard">
+              <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/admin/dashboard'}>
                 <LayoutDashboard />
                 Dashboard
               </SidebarMenuButton>
