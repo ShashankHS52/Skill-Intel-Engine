@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Github, Linkedin, Twitter, Mail, Heart } from 'lucide-react';
 
-export default function Footer() {
+export default function AppFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
@@ -17,7 +17,7 @@ export default function Footer() {
             <div className="flex items-center gap-1 text-sm text-muted-foreground">
               <span>Made with</span>
               <Heart className="h-4 w-4 text-red-500 fill-current" />
-              <span>for Karnataka</span>
+              <span>for India</span>
             </div>
             <div className="flex gap-6 text-sm">
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
