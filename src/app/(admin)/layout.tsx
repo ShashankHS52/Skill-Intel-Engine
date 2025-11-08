@@ -51,12 +51,13 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {PlaceHolderImages} from '@/lib/placeholder-images';
+import Image from 'next/image';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
 function AppSidebar() {
   const pathname = usePathname();
-  const { open, setOpen } = useSidebar();
+  const { open, setOpen, toggleSidebar, state } = useSidebar();
   
   const isProjectRoute = pathname.startsWith('/projects');
   const isAwarenessRoute = pathname.startsWith('/awareness');
@@ -65,24 +66,16 @@ function AppSidebar() {
     <Sidebar collapsible="icon" onOpenChange={setOpen} open={open}>
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-primary-foreground"
-            >
-              <path
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 15.5v-5l-3.75 3.75-1.42-1.42L9.58 10H4.5v-2h5.08l-4.25-4.25 1.42-1.42L10.5 6.08V1h2v5.08l3.75-3.75 1.42 1.42L13.42 8H18.5v2h-5.08l4.25 4.25-1.42 1.42L12.5 11.92V17h-2z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-sidebar-foreground">
-            Skill Intel
-          </h1>
+          <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">
+            <div className="bg-primary rounded-lg p-1.5 flex items-center justify-center">
+              <Image src="/logo.png" alt="Skill Intel Logo" width={24} height={24} className="text-primary-foreground" />
+            </div>
+            {state === 'expanded' && (
+              <h1 className="text-xl font-semibold text-sidebar-foreground">
+                Skill Intel
+              </h1>
+            )}
+          </button>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -95,7 +88,7 @@ function AppSidebar() {
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
-          <Collapsible open={isProjectRoute} onOpenChange={isProjectRoute ? undefined : (isOpen) => isProjectRoute && setOpen(isOpen)}>
+          <Collapsible open={isProjectRoute} onOpenChange={(isOpen) => isProjectRoute || setOpen(isOpen)}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip="Projects" className="justify-between" isActive={isProjectRoute}>
@@ -136,7 +129,7 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-          <Collapsible open={isAwarenessRoute} onOpenChange={isAwarenessRoute ? undefined : (isOpen) => isAwarenessRoute && setOpen(isOpen)}>
+          <Collapsible open={isAwarenessRoute} onOpenChange={(isOpen) => isAwarenessRoute || setOpen(isOpen)}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip="Awareness" className="justify-between" isActive={isAwarenessRoute}>

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { GraduationCap, Briefcase, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function CitizenHomePage() {
   return (
@@ -12,19 +13,7 @@ export default function CitizenHomePage() {
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-primary-foreground rounded-lg p-1.5 flex items-center justify-center">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="text-primary"
-              >
-                <path
-                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 15.5v-5l-3.75 3.75-1.42-1.42L9.58 10H4.5v-2h5.08l-4.25-4.25 1.42-1.42L10.5 6.08V1h2v5.08l3.75-3.75 1.42 1.42L13.42 8H18.5v2h-5.08l4.25 4.25-1.42 1.42L12.5 11.92V17h-2z"
-                  fill="currentColor"
-                />
-              </svg>
+              <Image src="/logo.png" alt="Skill Intel Logo" width={20} height={20} className="text-primary" />
             </div>
             <h1 className="text-xl font-semibold">Skill Intel Engine</h1>
           </div>
