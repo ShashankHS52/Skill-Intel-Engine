@@ -51,7 +51,7 @@ function AppSidebar() {
   const { open, setOpen, toggleSidebar, state } = useSidebar();
 
   return (
-    <Sidebar collapsible="icon" onOpenChange={setOpen} open={open}>
+    <Sidebar collapsible="icon">
       <SidebarHeader className={cn("p-4 transition-all", state === 'collapsed' && 'p-2')}>
         <div className={cn("flex items-center gap-2 transition-all", state === 'collapsed' ? 'justify-start' : 'justify-start')}>
           <button onClick={toggleSidebar} className="flex items-center gap-2 flex-shrink-0">
@@ -132,7 +132,7 @@ function AppHeader() {
       <div className="w-full flex-1">
         {/* Header content can go here if needed */}
       </div>
-       <Link href="/admin/login">
+       <Link href="/login">
             <p className="text-sm text-muted-foreground hover:text-foreground">
                 Admin Portal
             </p>
