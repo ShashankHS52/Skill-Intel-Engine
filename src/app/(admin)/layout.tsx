@@ -17,7 +17,7 @@ import {
   TrendingUp,
   AlertTriangle,
 } from 'lucide-react';
-
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -43,6 +43,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
@@ -54,8 +55,14 @@ import {PlaceHolderImages} from '@/lib/placeholder-images';
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
 function AppSidebar() {
+  const pathname = usePathname();
+  const { open, setOpen } = useSidebar();
+  
+  const isProjectRoute = pathname.startsWith('/projects');
+  const isAwarenessRoute = pathname.startsWith('/awareness');
+
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" onOpenChange={setOpen} open={open}>
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
           <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
@@ -68,7 +75,7 @@ function AppSidebar() {
               className="text-primary-foreground"
             >
               <path
-                d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.219L19.531 8.5V15.5L12 19.781L4.469 15.5V8.5L12 4.219ZM12 9C10.343 9 9 10.343 9 12C9 13.657 10.343 15 12 15C13.657 15 15 13.657 15 12C15 10.343 13.657 9 12 9Z"
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1.5 15.5v-5l-3.75 3.75-1.42-1.42L9.58 10H4.5v-2h5.08l-4.25-4.25 1.42-1.42L10.5 6.08V1h2v5.08l3.75-3.75 1.42 1.42L13.42 8H18.5v2h-5.08l4.25 4.25-1.42 1.42L12.5 11.92V17h-2z"
                 fill="currentColor"
               />
             </svg>
@@ -82,16 +89,16 @@ function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <Link href="/dashboard">
-              <SidebarMenuButton tooltip="Dashboard">
+              <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/dashboard'}>
                 <LayoutDashboard />
                 Dashboard
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
-          <Collapsible>
+          <Collapsible open={isProjectRoute} onOpenChange={isProjectRoute ? undefined : (isOpen) => isProjectRoute && setOpen(isOpen)}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Projects" className="justify-between">
+                <SidebarMenuButton tooltip="Projects" className="justify-between" isActive={isProjectRoute}>
                   <div className="flex items-center gap-2">
                     <FolderKanban />
                     Projects
@@ -104,7 +111,7 @@ function AppSidebar() {
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
                   <Link href="/projects/new">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/projects/new'}>
                       <Briefcase className="mr-2" />
                       New Projects
                     </SidebarMenuSubButton>
@@ -112,7 +119,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/tender">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/projects/tender'}>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
@@ -120,7 +127,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/schemes">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/projects/schemes'}>
                       <Lightbulb className="mr-2" />
                       New Schemes
                     </SidebarMenuSubButton>
@@ -129,10 +136,10 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-          <Collapsible>
+          <Collapsible open={isAwarenessRoute} onOpenChange={isAwarenessRoute ? undefined : (isOpen) => isAwarenessRoute && setOpen(isOpen)}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Awareness" className="justify-between">
+                <SidebarMenuButton tooltip="Awareness" className="justify-between" isActive={isAwarenessRoute}>
                   <div className="flex items-center gap-2">
                     <TrendingUp />
                     Awareness
@@ -145,7 +152,7 @@ function AppSidebar() {
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
                   <Link href="/awareness/job-sector-prediction">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-sector-prediction'}>
                       <TrendingUp className="mr-2" />
                       Job Sector Prediction
                     </SidebarMenuSubButton>
@@ -153,7 +160,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/awareness/job-risk-awareness">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-risk-awareness'}>
                       <AlertTriangle className="mr-2" />
                       Job Risk Awareness
                     </SidebarMenuSubButton>
@@ -181,7 +188,7 @@ function AppSidebar() {
 function AppHeader() {
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
-      <SidebarTrigger />
+      <SidebarTrigger className="flex md:hidden" />
       <div className="w-full flex-1">
         <form>
           <div className="relative">
