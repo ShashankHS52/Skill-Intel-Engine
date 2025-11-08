@@ -42,6 +42,7 @@ import {
 } from '@/components/ui/collapsible';
 import {PlaceHolderImages} from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
+import VaniAiWidget from '@/components/citizen/vani-ai-widget';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
@@ -156,6 +157,7 @@ export default function CitizenLayout({
           <main className="flex-1 container mx-auto p-4 md:p-6">
             {children}
           </main>
+          <VaniAiWidget />
         </div>
     );
   }
@@ -171,7 +173,7 @@ export default function CitizenLayout({
           </main>
         </SidebarInset>
       </div>
+      <VaniAiWidget />
     </SidebarProvider>
   );
 }
-
