@@ -109,9 +109,6 @@ export default function SkillProfilingPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Let's Build Your Skill Profile
-        </h1>
         <p className="text-muted-foreground">
           Your skills are valuable. Let's document them to find the best
           opportunities for you.

@@ -44,6 +44,7 @@ import {PlaceHolderImages} from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import VaniAiWidget from '@/components/citizen/vani-ai-widget';
 import AppFooter from '@/components/layout/footer';
+import React from 'react';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
@@ -127,12 +128,12 @@ function AppSidebar() {
 }
 
 
-function AppHeader() {
+function AppHeader({ pageTitle }: { pageTitle: string }) {
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
       <SidebarTrigger className="flex md:hidden" />
       <div className="w-full flex-1">
-        {/* Header content can go here if needed */}
+        <h1 className="text-lg font-semibold text-foreground">{pageTitle}</h1>
       </div>
        <Link href="/login">
             <p className="text-sm text-muted-foreground hover:text-foreground">
@@ -151,6 +152,11 @@ export default function CitizenLayout({
 }>) {
   const pathname = usePathname();
   const isAuthPage = pathname === '/register/identity' || pathname === '/';
+  
+  let pageTitle = "Dashboard";
+  if (pathname === '/skill-profiling') {
+    pageTitle = "My Skill Profile";
+  }
 
   if (isAuthPage) {
     return (
@@ -171,7 +177,7 @@ export default function CitizenLayout({
       <div className="flex min-h-screen w-full">
         <AppSidebar />
         <SidebarInset className="flex flex-col">
-          <AppHeader />
+          <AppHeader pageTitle={pageTitle} />
           <main className="flex flex-1 flex-col gap-6 p-4 lg:gap-8 lg:p-6">
             {children}
           </main>

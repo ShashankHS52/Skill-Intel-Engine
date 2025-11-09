@@ -373,11 +373,8 @@ export default function CitizenDashboardPage() {
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Welcome back, {userProfile.name}!
-        </h1>
         <p className="text-muted-foreground">
-          Here are your personalized insights and next steps for your career.
+          Welcome back, {userProfile.name}! Here are your personalized insights.
         </p>
       </div>
 
