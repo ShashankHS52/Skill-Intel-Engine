@@ -156,6 +156,8 @@ export default function CitizenLayout({
   let pageTitle = "Dashboard";
   if (pathname === '/skill-profiling') {
     pageTitle = "My Skill Profile";
+  } else if (pathname === '/citizen-dashboard') {
+    pageTitle = "Dashboard";
   }
 
   if (isAuthPage) {
@@ -167,7 +169,6 @@ export default function CitizenLayout({
           <div className='container mx-auto'>
             <AppFooter />
           </div>
-          <VaniAiWidget />
         </div>
     );
   }
