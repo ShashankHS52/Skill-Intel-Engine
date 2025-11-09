@@ -5,52 +5,13 @@ import { useState } from 'react';
 import Link from 'next/link';
 import {
   ArrowLeft,
-  Briefcase,
-  ChevronDown,
-  FileText,
-  FolderKanban,
-  LayoutDashboard,
-  Lightbulb,
-  Search,
-  Settings,
   TrendingUp,
   AlertTriangle,
   Loader2,
   Download,
   ShieldCheck,
 } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarInset,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-  SidebarProvider,
-  SidebarTrigger,
-} from '@/components/ui/sidebar';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -82,178 +43,18 @@ import { jobRiskAwareness, JobRiskAwarenessOutput } from '@/app/actions/job-risk
 import { Progress } from '@/components/ui/progress';
 
 
-const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
 
 const formSchema = z.object({
   sector: z.string().min(2, { message: 'Sector is required.' }),
   timeHorizon: z.string().min(2, { message: 'Time horizon is required.' }),
 });
 
-function AppSidebar() {
-  return (
-    <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
-          <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-primary-foreground"
-            >
-              <path
-                d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.219L19.531 8.5V15.5L12 19.781L4.469 15.5V8.5L12 4.219ZM12 9C10.343 9 9 10.343 9 12C9 13.657 10.343 15 12 15C13.657 15 15 13.657 15 12C15 10.343 13.657 9 12 9Z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-sidebar-foreground">
-            Skill Intel
-          </h1>
-        </div>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <Link href="/">
-              <SidebarMenuButton tooltip="Dashboard">
-                <LayoutDashboard />
-                Dashboard
-              </SidebarMenuButton>
-            </Link>
-          </SidebarMenuItem>
-          <Collapsible>
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Projects" className="justify-between">
-                  <div className="flex items-center gap-2">
-                    <FolderKanban />
-                    Projects
-                  </div>
-                  <ChevronDown className="h-4 w-4" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-            </SidebarMenuItem>
-            <CollapsibleContent asChild>
-              <SidebarMenuSub>
-                <SidebarMenuSubItem>
-                  <Link href="/projects/new">
-                    <SidebarMenuSubButton>
-                      <Briefcase className="mr-2" />
-                      New Projects
-                    </SidebarMenuSubButton>
-                  </Link>
-                </SidebarMenuSubItem>
-                <SidebarMenuSubItem>
-                  <Link href="/projects/tender">
-                    <SidebarMenuSubButton>
-                      <FileText className="mr-2" />
-                      Tender
-                    </SidebarMenuSubButton>
-                  </Link>
-                </SidebarMenuSubItem>
-                <SidebarMenuSubItem>
-                  <Link href="/projects/schemes">
-                    <SidebarMenuSubButton>
-                      <Lightbulb className="mr-2" />
-                      New Schemes
-                    </SidebarMenuSubButton>
-                  </Link>
-                </SidebarMenuSubItem>
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </Collapsible>
-          <Collapsible>
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Awareness" className="justify-between" isActive>
-                  <div className="flex items-center gap-2">
-                    <TrendingUp />
-                    Awareness
-                  </div>
-                  <ChevronDown className="h-4 w-4" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-            </SidebarMenuItem>
-            <CollapsibleContent asChild>
-              <SidebarMenuSub>
-                <SidebarMenuSubItem>
-                  <Link href="/awareness/job-sector-prediction">
-                    <SidebarMenuSubButton>
-                      <TrendingUp className="mr-2" />
-                      Job Sector Prediction
-                    </SidebarMenuSubButton>
-                  </Link>
-                </SidebarMenuSubItem>
-                <SidebarMenuSubItem>
-                  <Link href="/awareness/job-risk-awareness">
-                    <SidebarMenuSubButton isActive>
-                      <AlertTriangle className="mr-2" />
-                      Job Risk Awareness
-                    </SidebarMenuSubButton>
-                  </Link>
-                </SidebarMenuSubItem>
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </Collapsible>
-        </SidebarMenu>
-      </SidebarContent>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton tooltip="Settings">
-              <Settings />
-              Settings
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-    </Sidebar>
-  );
-}
-
-function AppHeader() {
-  return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
-      <SidebarTrigger />
-      <div className="w-full flex-1">
-        <form>
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
-            />
-          </div>
-        </form>
-      </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Avatar className="cursor-pointer h-9 w-9">
-            {userAvatar && <AvatarImage src={userAvatar.imageUrl} alt="User" data-ai-hint={userAvatar.imageHint} />}
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </header>
-  );
-}
 
 export default function JobRiskAwarenessPage() {
   const [analysisResult, setAnalysisResult] = useState<JobRiskAwarenessOutput | null>(null);
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -266,12 +67,14 @@ export default function JobRiskAwarenessPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     setAnalysisResult(null);
+    setError(null);
     try {
       const result = await jobRiskAwareness(values);
       setAnalysisResult(result);
       setIsDialogOpen(true);
     } catch (error) {
       console.error("Error analyzing job risk:", error);
+      setError("Failed to analyze job risk. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -292,147 +95,183 @@ export default function JobRiskAwarenessPage() {
   };
 
   return (
-    <SidebarProvider defaultOpen={false}>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <SidebarInset>
-          <AppHeader />
-          <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            <div className="flex items-center gap-4">
-              <Link href="/">
-                <Button variant="outline" size="icon" className="h-7 w-7">
-                  <ArrowLeft className="h-4 w-4" />
-                  <span className="sr-only">Back</span>
-                </Button>
-              </Link>
-              <div>
-                <h1 className="font-semibold text-xl md:text-2xl">Job Risk Awareness</h1>
-                <p className="text-sm text-muted-foreground">Identify at-risk job sectors and get AI-powered mitigation strategies.</p>
-              </div>
-            </div>
+    <>
+      <div className="flex items-center gap-4">
+        <Link href="/dashboard">
+          <Button variant="outline" size="icon" className="h-7 w-7">
+            <ArrowLeft className="h-4 w-4" />
+            <span className="sr-only">Back</span>
+          </Button>
+        </Link>
+        <div>
+          <h1 className="font-semibold text-xl md:text-2xl">Job Risk Awareness</h1>
+          <p className="text-sm text-muted-foreground">Identify at-risk job sectors and get AI-powered mitigation strategies.</p>
+        </div>
+      </div>
 
-            <Card className="max-w-2xl mx-auto w-full">
+      <Card className="max-w-2xl mx-auto w-full">
+        <CardHeader>
+          <CardTitle>Analyze Job Risk</CardTitle>
+          <CardDescription>Select a sector and time horizon to analyze potential risks from automation and economic shifts.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <FormField
+                control={form.control}
+                name="sector"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Economic Sector</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a sector" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Retail">Retail</SelectItem>
+                        <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+                        <SelectItem value="IT Services">IT Services</SelectItem>
+                        <SelectItem value="Healthcare">Healthcare</SelectItem>
+                        <SelectItem value="Construction">Construction</SelectItem>
+                        <SelectItem value="Finance">Finance</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="timeHorizon"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Time Horizon</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a horizon" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Short-term">Short-term (1-3 years)</SelectItem>
+                        <SelectItem value="Mid-term">Mid-term (3-5 years)</SelectItem>
+                        <SelectItem value="Long-term">Long-term (5+ years)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {loading ? 'Analyzing...' : 'Analyze Job Risk'}
+              </Button>
+              {error && (
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      {/* Results Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-orange-500" />
+              Job Risk Analysis Results
+            </DialogTitle>
+          </DialogHeader>
+          
+          {analysisResult && (
+            <div className="space-y-6">
+              {/* Risk Summary */}
+              <Card>
                 <CardHeader>
-                    <CardTitle>Analyze Job Risk</CardTitle>
-                    <CardDescription>Select a sector and time horizon to analyze potential risks from automation and economic shifts.</CardDescription>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <TrendingUp className="h-5 w-5 text-red-500" />
+                    Risk Summary
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="sector"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Economic Sector</FormLabel>
-                                    <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                        <SelectValue placeholder="Select a sector" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="Retail">Retail</SelectItem>
-                                        <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-                                        <SelectItem value="IT Services">IT Services</SelectItem>
-                                        <SelectItem value="Healthcare">Healthcare</SelectItem>
-                                        <SelectItem value="Construction">Construction</SelectItem>
-                                        <SelectItem value="Finance">Finance</SelectItem>
-                                    </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="timeHorizon"
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Time Horizon</FormLabel>
-                                    <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    >
-                                    <FormControl>
-                                        <SelectTrigger>
-                                        <SelectValue placeholder="Select a horizon" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="Short-term">Short-term (1-3 years)</SelectItem>
-                                        <SelectItem value="Mid-term">Mid-term (3-5 years)</SelectItem>
-                                        <SelectItem value="Long-term">Long-term (5+ years)</SelectItem>
-                                    </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                                )}
-                            />
-                            <Button type="submit" disabled={loading} className="w-full">
-                                {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                {loading ? 'Analyzing...' : 'Analyze Job Risk'}
-                            </Button>
-                        </form>
-                    </Form>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {analysisResult.riskSummary}
+                  </p>
                 </CardContent>
-            </Card>
-          </main>
-        </SidebarInset>
+              </Card>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogContent className="sm:max-w-2xl">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-2xl">
-                <AlertTriangle className="h-7 w-7 text-destructive" />
-                Job Risk Analysis
-              </DialogTitle>
-            </DialogHeader>
-            {analysisResult && (
-              <div className="space-y-6 max-h-[70vh] overflow-y-auto p-1 pr-4">
-                  <div>
-                    <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-                        <TrendingUp className="h-5 w-5 text-primary" /> Risk Summary
-                    </h3>
-                    <p className="text-sm text-foreground pl-7">{analysisResult.riskSummary}</p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-                     <AlertTriangle className="h-5 w-5 text-destructive" /> At-Risk Job Roles
-                  </h3>
-                  <div className="flex flex-wrap gap-2 pl-7">
-                    {analysisResult.atRiskJobs.map((job, index) => (
-                      <span key={index} className="text-sm bg-destructive/10 text-destructive-foreground/80 px-3 py-1 rounded-full">{job}</span>
-                    ))}
+              {/* At-Risk Jobs */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <AlertTriangle className="h-5 w-5 text-orange-500" />
+                    At-Risk Job Roles ({analysisResult.atRiskJobs?.length || 0})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-2">
+                    {analysisResult.atRiskJobs?.length > 0 ? (
+                      analysisResult.atRiskJobs.map((job, index) => (
+                        <div key={index} className="flex items-center gap-2 p-2 bg-orange-50 rounded-lg border border-orange-200">
+                          <AlertTriangle className="h-4 w-4 text-orange-500 flex-shrink-0" />
+                          <span className="text-sm">{job}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No at-risk jobs identified</p>
+                    )}
                   </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg flex items-center gap-2 mb-2">
-                    <ShieldCheck className="h-5 w-5 text-primary" /> Mitigation Strategies
-                  </h3>
-                  <ul className="list-disc pl-12 space-y-1 text-sm text-foreground">
-                    {analysisResult.mitigationStrategies.map((strategy, index) => (
-                      <li key={index}>{strategy}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={handleDownload}>
-                <Download className="mr-2 h-4 w-4" />
-                Download
-              </Button>
-              <DialogClose asChild>
-                <Button>Close</Button>
-              </DialogClose>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </SidebarProvider>
+                </CardContent>
+              </Card>
+
+              {/* Mitigation Strategies */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-lg">
+                    <ShieldCheck className="h-5 w-5 text-green-500" />
+                    Mitigation Strategies ({analysisResult.mitigationStrategies?.length || 0})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-3">
+                    {analysisResult.mitigationStrategies?.length > 0 ? (
+                      analysisResult.mitigationStrategies.map((strategy, index) => (
+                        <div key={index} className="flex items-start gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+                          <ShieldCheck className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm leading-relaxed">{strategy}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No mitigation strategies available</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={handleDownload} disabled={!analysisResult}>
+              <Download className="mr-2 h-4 w-4" />
+              Download Report
+            </Button>
+            <DialogClose asChild>
+              <Button variant="default">Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -18,7 +19,10 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -40,9 +44,10 @@ import {
   SidebarFooter,
   SidebarTrigger,
   SidebarInset,
+  useSidebar,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarMenuSubButton
 } from '@/components/ui/sidebar';
 import {
   Collapsible,
@@ -50,30 +55,49 @@ import {
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {PlaceHolderImages} from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
+import React from 'react';
+import Footer from '@/components/layout/footer';
 
 const userAvatar = PlaceHolderImages.find(p => p.id === 'user-avatar');
-
 function AppSidebar() {
+  const { open, setOpen } = useSidebar();
+  const pathname = usePathname();
+  const [projectsOpen, setProjectsOpen] = useState(false);
+  const [awarenessOpen, setAwarenessOpen] = useState(false);
+
+  const handleProjectsClick = () => {
+    if (!open) {
+      setOpen(true);
+      // Small delay to ensure sidebar opens before expanding
+      setTimeout(() => setProjectsOpen(true), 100);
+    } else {
+      setProjectsOpen(!projectsOpen);
+    }
+  };
+
+  const handleAwarenessClick = () => {
+    if (!open) {
+      setOpen(true);
+      // Small delay to ensure sidebar opens before expanding
+      setTimeout(() => setAwarenessOpen(true), 100);
+    } else {
+      setAwarenessOpen(!awarenessOpen);
+    }
+  };
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
-          <div className="bg-primary rounded-lg p-2 flex items-center justify-center">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-primary-foreground"
-            >
-              <path
-                d="M12 2L2 7V17L12 22L22 17V7L12 2ZM12 4.219L19.531 8.5V15.5L12 19.781L4.469 15.5V8.5L12 4.219ZM12 9C10.343 9 9 10.343 9 12C9 13.657 10.343 15 12 15C13.657 15 15 13.657 15 12C15 10.343 13.657 9 12 9Z"
-                fill="currentColor"
-              />
-            </svg>
-          </div>
-          <h1 className="text-xl font-semibold text-sidebar-foreground">
+      <SidebarHeader className="">
+        <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+            <Image
+              src="/logo.svg"
+              alt="Skill Intel Logo"
+              width={54}
+              height={54}
+              className="cursor-pointer flex-shrink-0"
+              onClick={() => setOpen(!open)}
+            />
+          <h1 className="text-xl font-semibold text-sidebar-foreground group-data-[collapsible=icon]:hidden">
             Skill Intel
           </h1>
         </div>
@@ -82,16 +106,20 @@ function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <Link href="/dashboard">
-              <SidebarMenuButton tooltip="Dashboard">
+              <SidebarMenuButton tooltip="Dashboard" isActive={pathname === '/dashboard'}>
                 <LayoutDashboard />
                 Dashboard
               </SidebarMenuButton>
             </Link>
           </SidebarMenuItem>
-          <Collapsible>
+          <Collapsible open={projectsOpen} onOpenChange={setProjectsOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Projects" className="justify-between">
+                <SidebarMenuButton 
+                  tooltip="Projects" 
+                  className="justify-between"
+                  onClick={handleProjectsClick}
+                >
                   <div className="flex items-center gap-2">
                     <FolderKanban />
                     Projects
@@ -104,7 +132,7 @@ function AppSidebar() {
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
                   <Link href="/projects/new">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/projects/new'}>
                       <Briefcase className="mr-2" />
                       New Projects
                     </SidebarMenuSubButton>
@@ -112,7 +140,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/tender">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/projects/tender'}>
                       <FileText className="mr-2" />
                       Tender
                     </SidebarMenuSubButton>
@@ -120,7 +148,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/projects/schemes">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/projects/schemes'}>
                       <Lightbulb className="mr-2" />
                       New Schemes
                     </SidebarMenuSubButton>
@@ -129,10 +157,14 @@ function AppSidebar() {
               </SidebarMenuSub>
             </CollapsibleContent>
           </Collapsible>
-          <Collapsible>
+          <Collapsible open={awarenessOpen} onOpenChange={setAwarenessOpen}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip="Awareness" className="justify-between">
+                <SidebarMenuButton 
+                  tooltip="Awareness" 
+                  className="justify-between"
+                  onClick={handleAwarenessClick}
+                >
                   <div className="flex items-center gap-2">
                     <TrendingUp />
                     Awareness
@@ -145,7 +177,7 @@ function AppSidebar() {
               <SidebarMenuSub>
                 <SidebarMenuSubItem>
                   <Link href="/awareness/job-sector-prediction">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-sector-prediction'}>
                       <TrendingUp className="mr-2" />
                       Job Sector Prediction
                     </SidebarMenuSubButton>
@@ -153,7 +185,7 @@ function AppSidebar() {
                 </SidebarMenuSubItem>
                 <SidebarMenuSubItem>
                   <Link href="/awareness/job-risk-awareness">
-                    <SidebarMenuSubButton>
+                    <SidebarMenuSubButton isActive={pathname === '/awareness/job-risk-awareness'}>
                       <AlertTriangle className="mr-2" />
                       Job Risk Awareness
                     </SidebarMenuSubButton>
@@ -181,7 +213,7 @@ function AppSidebar() {
 function AppHeader() {
   return (
     <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background/80 backdrop-blur-sm px-4 lg:h-[60px] lg:px-6">
-      <SidebarTrigger />
+      <SidebarTrigger className="flex md:hidden" />
       <div className="w-full flex-1">
         <form>
           <div className="relative">
@@ -223,11 +255,12 @@ export default function AdminLayout({
     <SidebarProvider defaultOpen={false}>
       <div className="flex min-h-screen w-full">
         <AppSidebar />
-        <SidebarInset>
+        <SidebarInset className="flex flex-col">
           <AppHeader />
           <main className="flex flex-1 flex-col gap-6 p-4 lg:gap-8 lg:p-6">
             {children}
           </main>
+          <Footer />
         </SidebarInset>
       </div>
     </SidebarProvider>

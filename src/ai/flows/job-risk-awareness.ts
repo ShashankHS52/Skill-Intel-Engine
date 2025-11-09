@@ -17,7 +17,26 @@ import {
 } from './job-risk-awareness-types';
 
 export async function jobRiskAwareness(input: JobRiskAwarenessInput): Promise<JobRiskAwarenessOutput> {
-  return jobRiskAwarenessFlow(input);
+  try {
+    return await jobRiskAwarenessFlow(input);
+  } catch (error) {
+    console.error('Error in job risk awareness flow:', error);
+    // Return a fallback response if AI fails
+    return {
+      riskSummary: `Analysis for ${input.sector} sector over ${input.timeHorizon.toLowerCase()} period shows potential risks from automation and economic shifts. However, detailed analysis could not be completed at this time.`,
+      atRiskJobs: [
+        'Entry-level positions',
+        'Routine manual tasks',
+        'Data entry roles'
+      ],
+      mitigationStrategies: [
+        'Invest in continuous learning and upskilling programs',
+        'Focus on developing human-centric skills like creativity and emotional intelligence',
+        'Consider career pivoting to emerging technology roles',
+        'Engage in professional networking and community building'
+      ]
+    };
+  }
 }
 
 const prompt = ai.definePrompt({

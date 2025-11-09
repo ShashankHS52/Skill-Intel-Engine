@@ -21,12 +21,21 @@ export function DetailedKPICard({ config, data }: DetailedKPICardProps) {
   const [showChart, setShowChart] = useState(false);
   const [showGeographic, setShowGeographic] = useState(false);
 
+  // Prepare chart data - use trend data if available, otherwise use breakdowns
+  const chartDataSource = data.trend || data.breakdowns;
+  
   const mockChartData: ChartData = {
-    labels: data.breakdowns?.map(b => b.label) || [],
+    labels: data.trend 
+      ? data.trend.map(t => t.period) 
+      : (data.breakdowns?.map(b => b.label) || []),
     datasets: [{
       label: config.title,
-      data: data.breakdowns?.map(b => b.value) || [],
-      backgroundColor: data.breakdowns?.map(b => b.color || config.color) || [],
+      data: data.trend 
+        ? data.trend.map(t => t.value) 
+        : (data.breakdowns?.map(b => b.value) || []),
+      backgroundColor: data.trend 
+        ? Array(data.trend.length).fill(config.color)
+        : (data.breakdowns?.map(b => b.color || config.color) || []),
       borderColor: config.color,
     }]
   };
@@ -122,14 +131,16 @@ export function DetailedKPICard({ config, data }: DetailedKPICardProps) {
         <ChartModal
           isOpen={showChart}
           onClose={() => setShowChart(false)}
-          title={`${config.title} - Breakdown Analysis`}
+          title={`${config.title} - ${data.trend ? 'Trend Analysis' : 'Breakdown Analysis'}`}
           data={mockChartData}
           config={{
-            type: 'bar',
+            type: data.trend ? 'line' : 'bar',
             title: config.title,
-            xAxisLabel: 'Category',
-            yAxisLabel: 'Percentage',
-            colors: data.breakdowns?.map(b => b.color || config.color) || [config.color],
+            xAxisLabel: data.trend ? 'Period' : 'Category',
+            yAxisLabel: data.trend ? 'Value' : 'Percentage',
+            colors: data.trend 
+              ? [config.color]
+              : (data.breakdowns?.map(b => b.color || config.color) || [config.color]),
             showLegend: true
           }}
         />
